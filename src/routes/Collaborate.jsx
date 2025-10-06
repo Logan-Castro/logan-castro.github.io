@@ -31,8 +31,8 @@ export default function Collaborate() {
 
           <section className="collaborate-card">
             <h2>Share Your Brief</h2>
-            <p className="collaborate-card__lead">Email works best — include timelines, constraints, or napkin sketches.</p>
-            <a className="button" href="mailto:you@example.com">you@example.com</a>
+            <p className="collaborate-card__lead">Email works best - include timelines, constraints, or napkin sketches.</p>
+            <a className="button" href="mailto:loganacastro@gmail.com">loganacastro@gmail.com</a>
             <p className="collaborate-card__note">Prefer a quick intro call? Mention it and I'll send a Calendly invite.</p>
           </section>
 
@@ -40,7 +40,7 @@ export default function Collaborate() {
             <h2>Other Channels</h2>
             <ul className="collaborate-card__links">
               <li>
-                <a href="https://www.linkedin.com/in/your-profile" target="_blank" rel="noreferrer">
+                <a href="https://www.linkedin.com/in/logan-castro-45b198325/" target="_blank" rel="noreferrer">
                   LinkedIn updates &amp; messages
                 </a>
               </li>

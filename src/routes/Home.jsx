@@ -86,10 +86,10 @@ export default function Home() {
           <p>Let's collaborate or talk shop. Reach me via:</p>
           <ul className="contact-list">
             <li>
-              <a href="mailto:you@example.com">you@example.com</a>
+              <a href="mailto:loganacastro@gmail.com">loganacastro@gmail.com</a>
             </li>
             <li>
-              <a href="https://www.linkedin.com/in/your-profile" target="_blank" rel="noreferrer">
+              <a href="https://www.linkedin.com/in/logan-castro-45b198325/" target="_blank" rel="noreferrer">
                 LinkedIn
               </a>
             </li>
