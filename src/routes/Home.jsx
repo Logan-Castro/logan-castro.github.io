@@ -54,7 +54,7 @@ export default function Home() {
           </div>
           <p className="projects__cta">
             <Link to="/projects" className="text-link">
-              Explore the full projects catalogue
+              Explore the full project catalog
             </Link>
           </p>
         </div>

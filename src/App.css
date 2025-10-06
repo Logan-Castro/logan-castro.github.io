@@ -309,6 +309,22 @@
   border-color: var(--accent-2);
 }
 
+.button--outline,
+.button--resume {
+  background: transparent;
+  color: var(--accent);
+  border-color: rgba(255, 152, 0, 0.7);
+}
+
+.button--outline:hover,
+.button--outline:focus-visible,
+.button--resume:hover,
+.button--resume:focus-visible {
+  color: var(--bg);
+  background: rgba(255, 152, 0, 0.15);
+  border-color: var(--accent);
+}
+
 @media (max-width: 600px) {
   .hero {
     padding-top: clamp(3rem, 10vw, 4rem);

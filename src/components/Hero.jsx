@@ -67,8 +67,11 @@ export default function Hero() {
           I build reliable prototypes that survive real-world abuse - from wildfire visualization tools to electric drivetrain upgrades.
         </p>
         <div className="hero__actions">
-          <Link className="button" to="/projects">Explore projects</Link>
-          <Link className="button button--ghost" to="/collaborate">Let's collaborate</Link>
+          <Link className="button button--outline" to="/projects">Explore projects</Link>
+          <Link className="button button--outline" to="/collaborate">Let's collaborate</Link>
+          <a className="button button--outline" href="/resume.pdf" target="_blank" rel="noreferrer">
+            Download resume
+          </a>
         </div>
       </div>
     </header>
