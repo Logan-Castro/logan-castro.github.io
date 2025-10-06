@@ -813,6 +813,19 @@
   padding: 1.25rem;
   display: grid;
   gap: 0.75rem;
+  overflow: hidden;
+}
+
+.collaborate-card .button {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.75rem 1.1rem;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  white-space: normal;
+  word-break: break-word;
+  border-radius: calc(var(--radius) - 6px);
+  box-sizing: border-box;
 }
 
 .collaborate-card ul {

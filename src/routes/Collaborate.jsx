@@ -32,7 +32,13 @@ export default function Collaborate() {
           <section className="collaborate-card">
             <h2>Share Your Brief</h2>
             <p className="collaborate-card__lead">Email works best - include timelines, constraints, or napkin sketches.</p>
-            <a className="button" href="mailto:loganacastro@gmail.com">loganacastro@gmail.com</a>
+            <a
+              className="button"
+              href="mailto:loganacastro@gmail.com"
+              aria-label="Email Logan Castro at loganacastro@gmail.com"
+            >
+              Email Logan
+            </a>
             <p className="collaborate-card__note">Prefer a quick intro call? Mention it and I'll send a Calendly invite.</p>
           </section>
 
