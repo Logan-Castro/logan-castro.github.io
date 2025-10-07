@@ -3,6 +3,7 @@ import Layout from "./components/Layout.jsx";
 import Home from "./routes/Home.jsx";
 import Projects from "./routes/Projects.jsx";
 import Collaborate from "./routes/Collaborate.jsx";
+import Resume from "./routes/Resume.jsx";
 import BikeOfTheseus from "./routes/projects/BikeOfTheseus.jsx";
 import WildfireTopographicMap from "./routes/projects/WildfireTopographicMap.jsx";
 import ThreeDPrintedJoystick from "./routes/projects/ThreeDPrintedJoystick.jsx";
@@ -61,6 +62,7 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="projects" element={<Projects />} />
           <Route path="collaborate" element={<Collaborate />} />
+          <Route path="resume" element={<Resume />} />
           {projectRoutes.map(route => (
             <Route key={route.path} path={route.path} element={<route.Component />} />
           ))}

@@ -94,7 +94,7 @@ export default function Home() {
               </a>
             </li>
             <li>
-              <a href="/resume.pdf">Download resume</a>
+              <Link to="/resume">View resume</Link>
             </li>
           </ul>
         </div>

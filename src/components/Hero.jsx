@@ -69,9 +69,9 @@ export default function Hero() {
         <div className="hero__actions">
           <Link className="button button--outline" to="/projects">Explore projects</Link>
           <Link className="button button--outline" to="/collaborate">Let's collaborate</Link>
-          <a className="button button--outline" href="/resume.pdf" target="_blank" rel="noreferrer">
-            Download resume
-          </a>
+          <Link className="button button--outline" to="/resume">
+            View resume
+          </Link>
         </div>
       </div>
     </header>

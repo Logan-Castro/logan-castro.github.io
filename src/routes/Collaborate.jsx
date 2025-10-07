@@ -1,4 +1,5 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export default function Collaborate() {
   useEffect(() => {
@@ -51,9 +52,7 @@ export default function Collaborate() {
                 </a>
               </li>
               <li>
-                <a href="/resume.pdf" target="_blank" rel="noreferrer">
-                  Download resume
-                </a>
+                <Link to="/resume">View resume</Link>
               </li>
             </ul>
           </section>
