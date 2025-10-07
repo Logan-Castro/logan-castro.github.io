@@ -3,7 +3,7 @@ import ProjectCard from "../components/ProjectCard.jsx";
 import { projects, getProjectCategories, getProjectStatuses } from "../data/projects.js";
 
 const ALL_OPTION = "All";
-const STATUS_ORDER = ["In Progress", "Ongoing", "Completed"];
+const STATUS_ORDER = ["On the Horizon", "In Progress", "Ongoing", "Completed"];
 
 function buildSearchIndex(project) {
   const tokens = [project.title, project.summary, project.category, project.status, ...(project.tags ?? [])]

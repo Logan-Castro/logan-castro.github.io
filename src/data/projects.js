@@ -1,5 +1,41 @@
 ﻿export const projects = [
   {
+    title: "The Bike of Theseus",
+    slug: "bike-of-theseus",
+    summary: "Rebuild a beloved bike by fabricating every component myself until the entire machine is literally my handiwork.",
+    category: "Flagship",
+    status: "On the Horizon",
+    featured: true,
+    tags: ["Fabrication", "CNC", "Metrology", "Cycling"],
+    image: null,
+    imageAlt: null,
+    body: [
+      {
+        type: "text",
+        title: "Vision",
+        paragraphs: [
+          "Starting from a stock steel frame, I'll gradually replace every component - frame tubes, drivetrain, wheels, even hardware - with parts I model, machine, or fabricate myself while keeping the bike ride-ready the entire time."
+        ],
+      },
+      {
+        type: "list",
+        title: "Build Roadmap",
+        items: [
+          "Reverse engineer the geometry in CAD and lock tolerances before cutting metal.",
+          "Fabricate custom components using a blend of CNC milling, brazing, and additive tooling while matching original aesthetics.",
+          "Instrument the bike after each swap to track how incremental changes affect ride feel and performance."
+        ],
+      },
+      {
+        type: "text",
+        title: "Next Steps",
+        paragraphs: [
+          "Fixture the frame jig, prototype a head tube and dropout set, then move on to drivetrain components once alignment checks out."
+        ],
+      },
+    ],
+  },
+  {
     title: "Wildfire Topographic Map",
     slug: "wildfire-topographic-map",
     summary: "Laser-cut topographic map and acompanying website to visualize the impact of 2021's Caldor Fire in the Lake Tahoe area.",

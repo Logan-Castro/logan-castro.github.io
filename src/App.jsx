@@ -3,6 +3,7 @@ import Layout from "./components/Layout.jsx";
 import Home from "./routes/Home.jsx";
 import Projects from "./routes/Projects.jsx";
 import Collaborate from "./routes/Collaborate.jsx";
+import BikeOfTheseus from "./routes/projects/BikeOfTheseus.jsx";
 import WildfireTopographicMap from "./routes/projects/WildfireTopographicMap.jsx";
 import ThreeDPrintedJoystick from "./routes/projects/ThreeDPrintedJoystick.jsx";
 import RoboticArm from "./routes/projects/RoboticArm.jsx";
@@ -28,6 +29,7 @@ import NotFound from "./routes/NotFound.jsx";
 import "./App.css";
 
 const projectRoutes = [
+  { path: "project/bike-of-theseus", Component: BikeOfTheseus },
   { path: "project/wildfire-topographic-map", Component: WildfireTopographicMap },
   { path: "project/3d-printed-joystick", Component: ThreeDPrintedJoystick },
   { path: "project/robotic-arm", Component: RoboticArm },
