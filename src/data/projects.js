@@ -1,4 +1,5 @@
 ﻿export const projects = [
+  // The Bike of Theseus
   {
     title: "The Bike of Theseus",
     slug: "bike-of-theseus",
@@ -35,6 +36,7 @@
       },
     ],
   },
+  // Wildfire Topographic Map
   {
     title: "Wildfire Topographic Map",
     slug: "wildfire-topographic-map",
@@ -103,23 +105,97 @@
         ],
       },
       {
-        type: "list",
-        title: "Highlights",
-        items: [
-          "Edge caching keeps contour redraws under 60 ms even on weak LTE.",
-          "Offline sync stores sketches in IndexedDB and pushes them back once service returns.",
-          "Export flow generates printable briefings the command trailer can sign off within minutes."
+        type: "text",
+        title: "Interactive Digital Demo",
+        subtitle: "5:30 AM - 8 AM",
+        layout: "split",
+        paragraphs: [
+          {
+            type: "rich-text",
+            chunks: [
+              "I was exhausted once the map was done. The sun was soon to rise, and I wanted nothing more than to take a nap (check out the ",
+              { type: "link", to: "/project/folding-nap-pod", text: "Nap Pod" },
+              " project!). However, the project felt incomplete. I had brought a little Raspberry Pi screen with me, so I decided I'd make use of it. With the help of AI tools, I created a basic HTML page hosted locally on the RPi which allowed users to drag a slider and see before and after images of the region. Test out the demo below to see a replica of the RPi's functionality!"
+            ]
+          }
+        ],
+        media: [
+          {
+            src: "/images/projects/wildfire/Raspberry-Pi-Python.jpg",
+            alt: "Implementing the digital system with Python and HTML on a Raspberry Pi",
+            caption: "Setting up the slider demo on the Raspberry Pi using Python and HTML."
+          }
         ],
       },
       {
+        type: "slider-grid",
+        title: null,
+        layout: "5050split",
+        sliderPairs: [
+          {
+            before: {
+              src: "/images/projects/wildfire/1Before.png",
+              label: "Before",
+              alt: "Imagery of the Highway 50 corridor prior to the Caldor Fire"
+            },
+            after: {
+              src: "/images/projects/wildfire/1After.png",
+              label: "After",
+              alt: "Imagery of the Highway 50 corridor after the Caldor Fire"
+            }
+          },
+          {
+            before: {
+              src: "/images/projects/wildfire/2Before.png",
+              label: "Before",
+              alt: "Imagery of the Sierra-at-Tahoe basin before the Caldor Fire"
+            },
+            after: {
+              src: "/images/projects/wildfire/2After.png",
+              label: "After",
+              alt: "Imagery of the Sierra-at-Tahoe basin after the Caldor Fire"
+            }
+          }
+        ]
+      },
+      {
         type: "text",
-        title: "Next Steps",
+        title: "Results?",
+        subtitle: "10:00 AM - 11:00 AM",
+        layout: "split",
         paragraphs: [
-          "Wiring in VIIRS thermal feeds plus a red-lens friendly color scheme before the next burn-over drill."
+          {
+            type: "rich-text",
+            chunks: [
+              "After completing the interactive website portion and sourcing a frame for the project, it was ready to present. I took a break in the ",
+              { type: "link", to: "/project/folding-nap-pod", text: "Nap Pod" },
+              " I'd made last semester, and woke up an hour or so later in a state of delirious pride. Each participant was given the opportunity to present to judges from various campus programs, and I delivered mine with a strong narrative and demo. Queue the drumroll..."
+            ]
+          }
+        ],
+        media: [
+          {
+            src: "/images/projects/wildfire/Presentation.jpg",
+            alt: "Presenting the wildfire visualization to judges",
+            caption: "Propping the map up on easels, I walked the judges through the data workflow, fabrication stack, and interactive demo."
+          }
+        ],
+      },
+      {
+        type: "victory",
+        title: "VICTORY!",
+        paragraphs: [
+          {
+            type: "rich-text",
+            chunks: [
+              "The judges awarded the project both the Climate Category Prize and the overall Grand Prize. So much credit goes my friends and fellow participants, and many thanks to Make BC and the sponsors of the event."
+            ]
+          }
         ],
       }
     ],
   },
+  // 3D Printed Joystick
   {
     title: "3D Printed Joystick",
     slug: "3d-printed-joystick",
@@ -156,6 +232,7 @@
       }
     ],
   },
+  // Robotic Arm
   {
     title: "Robotic Arm",
     slug: "robotic-arm",
@@ -191,6 +268,7 @@
       }
     ],
   },
+  // Custom Catan Board
   {
     title: "Custom Catan Board",
     slug: "custom-catan-board",
@@ -226,6 +304,7 @@
       }
     ],
   },
+  // Repurposed Sawblade Art
   {
     title: "Repurposed Sawblade Art",
     slug: "repurposed-sawblade-art",
@@ -261,6 +340,7 @@
       }
     ],
   },
+  // Brass Coins
   {
     title: "Brass Coins",
     slug: "brass-coins",
@@ -296,6 +376,7 @@
       }
     ],
   },
+  // Foam CNC Boat
   {
     title: "Foam CNC Boat",
     slug: "foam-cnc-boat",
@@ -331,6 +412,7 @@
       }
     ],
   },
+  // Rabbit Cage Latch
   {
     title: "Rabbit Cage Latch",
     slug: "rabbit-cage-latch",
@@ -366,6 +448,7 @@
       }
     ],
   },
+  // CNC Router Wood Experiments
   {
     title: "CNC Router Wood Experiments",
     slug: "cnc-router-wood-experiments",
@@ -401,6 +484,7 @@
       }
     ],
   },
+  // Queen of Hearts
   {
     title: "Queen of Hearts",
     slug: "queen-of-hearts",
@@ -436,6 +520,7 @@
       }
     ],
   },
+  // Folding Nap Pod
   {
     title: "Folding Nap Pod",
     slug: "folding-nap-pod",
@@ -471,6 +556,7 @@
       }
     ],
   },
+  // Trashcan Backboard
   {
     title: "Trashcan Backboard",
     slug: "trashcan-backboard",
@@ -506,6 +592,7 @@
       }
     ],
   },
+  // Waterbottle Stickers
   {
     title: "Waterbottle Stickers",
     slug: "waterbottle-stickers",
@@ -541,6 +628,7 @@
       }
     ],
   },
+  // Silverware Organizer
   {
     title: "Silverware Organizer",
     slug: "silverware-organizer",
@@ -576,6 +664,7 @@
       }
     ],
   },
+  // Man Cave Sign
   {
     title: "Man Cave Sign",
     slug: "man-cave-sign",
@@ -611,6 +700,7 @@
       }
     ],
   },
+  // Collegiate Coasters
   {
     title: "Collegiate Coasters",
     slug: "collegiate-coasters",
@@ -646,6 +736,7 @@
       }
     ],
   },
+  // Strandbeest Linkage
   {
     title: "Strandbeest Linkage",
     slug: "strandbeest-linkage",
@@ -681,6 +772,7 @@
       }
     ],
   },
+  // Bomb-Disarming Robot
   {
     title: "Bomb-Disarming Robot",
     slug: "bomb-disarming-robot",
@@ -716,6 +808,7 @@
       }
     ],
   },
+  // The Best Cheeseburger Fries
   {
     title: "The Best Cheeseburger Fries",
     slug: "the-best-cheeseburger-fries",
@@ -751,6 +844,7 @@
       }
     ],
   },
+  // Dunking
   {
     title: "Dunking",
     slug: "dunking",
@@ -786,6 +880,7 @@
       }
     ],
   },
+  // Baja SAE Kart
   {
     title: "Baja SAE Kart",
     slug: "baja-sae-kart",
