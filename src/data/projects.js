@@ -5,7 +5,7 @@
     summary: "Rebuild a beloved bike by fabricating every component myself until the entire machine is literally my handiwork.",
     category: "Flagship",
     status: "On the Horizon",
-    featured: true,
+    featured: false,
     tags: ["Fabrication", "CNC", "Metrology", "Cycling"],
     image: null,
     imageAlt: null,
