@@ -52,7 +52,7 @@
         type: "text",
         title: "Premise",
         paragraphs: [
-          "During spring of my freshman year at Boston College, I joined in on MakeBC's annual 24-hour Make-a-Thon. The event had students enter in 1 of 3 categories: climate, education, or water. I arrived with no idea of what I was getting into, but I was determined to walk away with the Grand Prize."
+          "During spring of my freshman year at Boston College, I joined in on MakeBC's annual 24-hour Make-a-Thon. The event had students enter in 1 of 3 categories: sustainability, developmental education, or art. I arrived with no idea of what I was getting into, but I was determined to walk away with the Grand Prize."
         ],
       },
       {
@@ -113,9 +113,7 @@
           {
             type: "rich-text",
             chunks: [
-              "I was exhausted once the map was done. The sun was soon to rise, and I wanted nothing more than to take a nap (check out the ",
-              { type: "link", to: "/project/folding-nap-pod", text: "Nap Pod" },
-              " project!). However, the project felt incomplete. I had brought a little Raspberry Pi screen with me, so I decided I'd make use of it. With the help of AI tools, I created a basic HTML page hosted locally on the RPi which allowed users to drag a slider and see before and after images of the region. Test out the demo below to see a replica of the RPi's functionality!"
+              "I was exhausted once the map was done. The sun was soon to rise, and I wanted nothing more than to sleep. However, the project felt incomplete. I had brought a little Raspberry Pi screen with me, so I decided I'd make use of it. With the help of AI tools, I created a basic HTML page hosted locally on the RPi which allowed users to drag a slider and see before and after images of the region. Test out the demo below to see a replica of the RPi's functionality!"
             ]
           }
         ],
@@ -188,7 +186,7 @@
           {
             type: "rich-text",
             chunks: [
-              "The judges awarded the project both the Climate Category Prize and the overall Grand Prize. So much credit goes my friends and fellow participants, and many thanks to Make BC and the sponsors of the event."
+              "The judges awarded the project both the Sustainability Category Prize and the overall Grand Prize. So much credit goes my friends and fellow participants, and many thanks to Make BC and the sponsors of the event."
             ]
           }
         ],
