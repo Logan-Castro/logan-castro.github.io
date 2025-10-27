@@ -64,7 +64,7 @@ export default function Hero() {
           <span className={`hero__typed-text${isTyping ? " hero__typed-text--active" : ""}`}>{typedText}</span>
         </p>
         <p className="hero__lead">
-          I build reliable prototypes that survive real-world abuse - from wildfire visualization tools to electric drivetrain upgrades.
+          Website in the works...
         </p>
         <div className="hero__actions">
           <Link className="button button--outline" to="/projects">Explore projects</Link>

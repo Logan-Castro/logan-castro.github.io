@@ -47,7 +47,7 @@ export default function Collaborate() {
             <h2>Other Channels</h2>
             <ul className="collaborate-card__links">
               <li>
-                <a href="https://www.linkedin.com/in/logan-castro-45b198325/" target="_blank" rel="noreferrer">
+                <a href="https://www.linkedin.com/in/loganacastro" target="_blank" rel="noreferrer">
                   LinkedIn updates &amp; messages
                 </a>
               </li>
