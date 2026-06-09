@@ -25,7 +25,10 @@ const photos = defineCollection({
     date: z.coerce.date(),
     camera: z.string().optional(),
     location: z.string().optional(),
+    lens: z.string().optional(),
+    exposure: z.string().optional(),
     cover: z.string().optional(),
+    featured: z.boolean().default(false),
   }),
 });
 

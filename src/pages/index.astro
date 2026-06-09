@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import PhotoCard from '../components/PhotoCard.astro';
+import PhotoLightbox from '../components/PhotoLightbox.astro';
 
 const allProjects = await getCollection('projects');
 const featured = allProjects
@@ -12,6 +13,7 @@ const featured = allProjects
 
 const allPhotos = await getCollection('photos');
 const photoTeaser = allPhotos
+  .filter((p) => p.data.featured)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
@@ -86,12 +88,17 @@ const heroSkills = ['Mechanical Design', 'CNC & Fabrication', 'Robotics', 'Photo
               cover={photo.data.cover}
               location={photo.data.location}
               camera={photo.data.camera}
+              date={photo.data.date}
+              lens={photo.data.lens}
+              exposure={photo.data.exposure}
             />
           ))
         }
       </div>
     </div>
   </section>
+
+  <PhotoLightbox />
 </Base>
 
 <style>

@@ -1,0 +1,201 @@
+---
+---
+
+<div
+  id="photo-lightbox"
+  class="lightbox"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Photo viewer"
+  hidden
+>
+  <button type="button" class="close-btn" data-lightbox-close aria-label="Close">
+    <svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    </svg>
+  </button>
+  <figure class="lightbox-content">
+    <img class="lightbox-img" alt="" />
+    <figcaption class="lightbox-meta">
+      <p class="lightbox-title" data-lightbox-title></p>
+      <p class="lightbox-line" data-lightbox-line></p>
+      <p class="lightbox-detail" data-lightbox-detail></p>
+    </figcaption>
+  </figure>
+</div>
+
+<style>
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background-color: rgba(15, 22, 38, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    animation: lightbox-in 0.18s ease-out;
+  }
+
+  .lightbox[hidden] {
+    display: none;
+  }
+
+  @keyframes lightbox-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 0;
+    color: #F5DEC8;
+    cursor: pointer;
+    padding: 0.55rem;
+    line-height: 0;
+    border-radius: 999px;
+    transition: background-color 0.15s;
+  }
+
+  .close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .close-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .lightbox-content {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 100%;
+    max-height: 100%;
+    min-height: 0;
+  }
+
+  .lightbox-img {
+    max-width: min(96vw, 1400px);
+    max-height: min(80vh, 900px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: 4px;
+  }
+
+  .lightbox-meta {
+    text-align: center;
+    color: #F5DEC8;
+    max-width: 100%;
+  }
+
+  .lightbox-title {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    margin: 0 0 0.35rem;
+    color: #F5DEC8;
+  }
+
+  .lightbox-line {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(245, 222, 200, 0.7);
+  }
+
+  .lightbox-detail {
+    margin: 0.3rem 0 0;
+    font-size: 0.8rem;
+    color: rgba(245, 222, 200, 0.55);
+  }
+
+  .lightbox-title:empty,
+  .lightbox-line:empty,
+  .lightbox-detail:empty {
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+    .lightbox {
+      padding: 1rem;
+    }
+
+    .lightbox-img {
+      max-height: 65vh;
+    }
+
+    .close-btn {
+      top: 0.75rem;
+      right: 0.75rem;
+    }
+  }
+</style>
+
+<script>
+  const lightbox = document.getElementById('photo-lightbox') as HTMLElement | null;
+  if (lightbox) {
+    const img = lightbox.querySelector<HTMLImageElement>('.lightbox-img');
+    const titleEl = lightbox.querySelector<HTMLElement>('[data-lightbox-title]');
+    const lineEl = lightbox.querySelector<HTMLElement>('[data-lightbox-line]');
+    const detailEl = lightbox.querySelector<HTMLElement>('[data-lightbox-detail]');
+    const closeBtn = lightbox.querySelector<HTMLElement>('[data-lightbox-close]');
+    let lastFocused: HTMLElement | null = null;
+
+    const openLightbox = (trigger: HTMLElement) => {
+      const ds = trigger.dataset;
+      if (!ds.full || !img) return;
+
+      img.src = ds.full;
+      img.alt = ds.title || '';
+
+      if (titleEl) titleEl.textContent = ds.title || '';
+      if (lineEl) {
+        const parts = [ds.location, ds.date, ds.camera].filter(Boolean);
+        lineEl.textContent = parts.join(' · ');
+      }
+      if (detailEl) {
+        const parts = [ds.lens, ds.exposure].filter(Boolean);
+        detailEl.textContent = parts.join(' · ');
+      }
+
+      lastFocused = document.activeElement as HTMLElement | null;
+      lightbox.hidden = false;
+      document.body.style.overflow = 'hidden';
+      closeBtn?.focus();
+    };
+
+    const closeLightbox = () => {
+      lightbox.hidden = true;
+      document.body.style.overflow = '';
+      if (img) img.src = '';
+      lastFocused?.focus();
+    };
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      const trigger = target?.closest('[data-photo-trigger]') as HTMLElement | null;
+      if (trigger && !trigger.hasAttribute('disabled')) {
+        e.preventDefault();
+        openLightbox(trigger);
+      }
+    });
+
+    closeBtn?.addEventListener('click', closeLightbox);
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !lightbox.hidden) closeLightbox();
+    });
+  }
+</script>

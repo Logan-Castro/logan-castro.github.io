@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PhotoCard from '../components/PhotoCard.astro';
+import PhotoLightbox from '../components/PhotoLightbox.astro';
 
 const photos = await getCollection('photos');
 const sorted = photos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -13,7 +14,7 @@ const sorted = photos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf
       <p class="eyebrow">Photography</p>
       <h1>Photos</h1>
       <p class="lede">
-        Shot mostly on a Nikon D3100 and an iPhone, usually somewhere outside Santa Rosa.
+        Mostly shot on an iPhone 15 Pro, occasionally on a Nikon D5100 I'm still figuring out. All of it taken somewhere worth being.
       </p>
     </div>
   </section>
@@ -29,6 +30,9 @@ const sorted = photos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf
                 cover={photo.data.cover}
                 location={photo.data.location}
                 camera={photo.data.camera}
+                date={photo.data.date}
+                lens={photo.data.lens}
+                exposure={photo.data.exposure}
               />
             ))}
           </div>
@@ -38,6 +42,8 @@ const sorted = photos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf
       }
     </div>
   </section>
+
+  <PhotoLightbox />
 </Base>
 
 <style>
