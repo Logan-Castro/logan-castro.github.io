@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About — Logan Castro">
+  <section class="page-head">
+    <div class="container">
+      <p class="eyebrow">About</p>
+      <h1>Hi, I'm Logan.</h1>
+    </div>
+  </section>
+
+  <section class="about-body">
+    <div class="container body-grid">
+      <div class="body-copy">
+        <p>
+          I'm a mechanical engineering student at Santa Rosa Junior College after a year at Boston
+          College. The short version: I like building things that have to actually work — projects
+          where the failure mode is real and someone has to live with the result.
+        </p>
+        <p>
+          Most of what I make starts with a real problem: a wildfire that hit my hometown, a
+          friend who can't grip a stock joystick, a competition car that needs a faster way to
+          validate suspension changes. The build itself is just the bridge between the problem and
+          the answer.
+        </p>
+        <p>
+          Off the bench, I'm usually shooting film around Annadel State Park, on a bike somewhere
+          near Highway 1, or building something that has no business existing. The portfolio is the
+          long version.
+        </p>
+      </div>
+      <aside class="body-aside">
+        <img src="/images/about/about-workshop.jpg" alt="Logan in the workshop" loading="lazy" />
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page-head {
+    padding-block: 4rem 1rem;
+  }
+
+  .page-head h1 {
+    margin-top: 0.5rem;
+  }
+
+  .about-body {
+    padding-block: 2rem 5rem;
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .body-copy p {
+    margin-bottom: 1.25rem;
+    line-height: 1.7;
+  }
+
+  .body-aside img {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  @media (max-width: 800px) {
+    .body-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

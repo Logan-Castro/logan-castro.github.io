@@ -1,0 +1,73 @@
+---
+interface Props {
+  title: string;
+  cover?: string;
+  location?: string;
+  camera?: string;
+}
+
+const { title, cover, location, camera } = Astro.props;
+---
+
+<figure class="photo">
+  <div class="photo-cover">
+    {
+      cover ? (
+        <img src={cover} alt={title} loading="lazy" />
+      ) : (
+        <div class="photo-placeholder" aria-hidden="true" />
+      )
+    }
+  </div>
+  <figcaption>
+    <p class="photo-title">{title}</p>
+    {
+      (location || camera) && (
+        <p class="photo-meta muted">
+          {location}
+          {location && camera && <span> · </span>}
+          {camera}
+        </p>
+      )
+    }
+  </figcaption>
+</figure>
+
+<style>
+  .photo {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .photo-cover {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: var(--bg-secondary);
+  }
+
+  .photo-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photo-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(160deg, var(--bg-secondary), var(--accent-green));
+    opacity: 0.6;
+  }
+
+  .photo-title {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .photo-meta {
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <p class="footer-name">Logan Castro</p>
+    <ul class="footer-links">
+      <li>
+        <a href="https://github.com/logan-castro" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </li>
+      <li>
+        <a href="mailto:logan@example.com">Email</a>
+      </li>
+    </ul>
+    <p class="footer-meta muted">© {year}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: 6rem;
+    border-top: 1px solid var(--border);
+    padding-block: 2.5rem;
+    background-color: var(--bg-secondary);
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-name {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+  }
+
+  .footer-links a {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .footer-links a:hover {
+    color: var(--accent);
+  }
+</style>

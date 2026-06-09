@@ -1,0 +1,212 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PhotoCard from '../components/PhotoCard.astro';
+
+const allProjects = await getCollection('projects');
+const featured = allProjects
+  .filter((p) => p.data.featured)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const allPhotos = await getCollection('photos');
+const photoTeaser = allPhotos
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const heroSkills = ['Mechanical Design', 'CNC & Fabrication', 'Robotics', 'Photography'];
+---
+
+<Base>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <p class="eyebrow">Mechanical engineering student · Santa Rosa, CA</p>
+        <h1>I build things. Sometimes they win awards.</h1>
+        <p class="hero-sub">
+          Mechanical engineering student at Santa Rosa Junior College. Co-founded the Baja SAE program and lead vehicle dynamics. I make things work, then make them better.
+        </p>
+        <ul class="hero-tags">
+          {heroSkills.map((skill) => <li>{skill}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured">
+    <div class="container">
+      <div class="section-head">
+        <h2>Featured work</h2>
+        <a href="/projects" class="section-link">See all projects ↗</a>
+      </div>
+      <div class="card-grid">
+        {
+          featured.map((project) => (
+            <ProjectCard
+              title={project.data.title}
+              description={project.data.description}
+              category={project.data.category}
+              status={project.data.status}
+              cover={project.data.cover}
+              coverAlt={project.data.coverAlt}
+              href={`/projects/${project.id}/`}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="about-teaser">
+    <div class="container about-inner">
+      <div>
+        <p class="eyebrow">About</p>
+        <h2>Engineering with a foot outside.</h2>
+        <p>
+          I'm studying mechanical engineering at Santa Rosa Junior College after a year at Boston
+          College. Off the bench, I'm usually somewhere between Highway 1 and the Sierras, trying to find my limits and then break them down.
+        </p>
+        <a href="/about" class="inline-link">More about me ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="photos">
+    <div class="container">
+      <div class="section-head">
+        <h2>From the camera</h2>
+        <a href="/photos" class="section-link">Full gallery ↗</a>
+      </div>
+      <div class="photo-grid">
+        {
+          photoTeaser.map((photo) => (
+            <PhotoCard
+              title={photo.data.title}
+              cover={photo.data.cover}
+              location={photo.data.location}
+              camera={photo.data.camera}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-block: 5rem 3rem;
+  }
+
+  .hero-inner {
+    max-width: 760px;
+  }
+
+  .hero h1 {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 640px;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+  }
+
+  .hero-tags li {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background-color: var(--bg-secondary);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .section-link {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  .section-link:hover {
+    color: var(--accent);
+  }
+
+  .featured {
+    padding-block: 3rem;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .about-teaser {
+    padding-block: 5rem 3rem;
+    background-color: var(--bg-secondary);
+    margin-block: 3rem 0;
+  }
+
+  .about-inner {
+    max-width: 720px;
+  }
+
+  .about-teaser h2 {
+    margin: 1rem 0;
+  }
+
+  .about-teaser p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .inline-link {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .photos {
+    padding-block: 3rem;
+  }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .card-grid,
+    .photo-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero {
+      padding-block: 3rem 2rem;
+    }
+    .card-grid,
+    .photo-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

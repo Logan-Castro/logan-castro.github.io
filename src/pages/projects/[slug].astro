@@ -1,0 +1,252 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const statusLabel: Record<string, string> = {
+  completed: 'Completed',
+  'in-progress': 'In Progress',
+  'on-horizon': 'On the Horizon',
+};
+
+const categoryLabel: Record<string, string> = {
+  vehicles: 'Vehicles',
+  fabrication: 'Fabrication',
+  mechatronics: 'Mechatronics',
+  class: 'Class Projects',
+  dorm: 'Dorm Builds',
+  fun: 'Fun',
+};
+---
+
+<Base title={`${project.data.title} — Logan Castro`} description={project.data.description}>
+  <article>
+    <header class="project-head">
+      <div class="container head-grid">
+        <div class="head-meta">
+          <p class="eyebrow">
+            <span>{categoryLabel[project.data.category] ?? project.data.category}</span>
+            <span class="sep">·</span>
+            <span>{statusLabel[project.data.status] ?? project.data.status}</span>
+          </p>
+          <h1>{project.data.title}</h1>
+          <p class="context muted">{project.data.context}</p>
+          {
+            project.data.team && project.data.team.length > 0 && (
+              <p class="team muted">
+                <strong>Team:</strong>{' '}
+                {project.data.team.map((member, i) => (
+                  <span>
+                    {member}
+                    {i < project.data.team!.length - 1 && <span class="sep"> · </span>}
+                  </span>
+                ))}
+              </p>
+            )
+          }
+          {
+            project.data.tags.length > 0 && (
+              <ul class="tags">
+                {project.data.tags.map((tag) => (
+                  <li>{tag}</li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+        <div class="head-cover">
+          {
+            project.data.cover ? (
+              <img
+                src={project.data.cover}
+                alt={project.data.coverAlt ?? project.data.title}
+                loading="eager"
+              />
+            ) : (
+              <div class="cover-placeholder" aria-hidden="true">
+                <span>{project.data.title.charAt(0)}</span>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="container project-body">
+      <Content />
+    </div>
+
+    <footer class="project-foot">
+      <div class="container">
+        <a href="/projects" class="back-link">← Back to all projects</a>
+      </div>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .project-head {
+    padding-block: 4rem 3rem;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .head-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .head-meta h1 {
+    margin: 0.75rem 0 1rem;
+  }
+
+  .eyebrow {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .sep {
+    opacity: 0.5;
+  }
+
+  .context {
+    margin: 0 0 0.5rem;
+  }
+
+  .team {
+    margin: 0 0 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .team strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tags li {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .head-cover {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+  }
+
+  .head-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cover-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent) 100%);
+    opacity: 0.5;
+  }
+
+  .cover-placeholder span {
+    font-family: var(--font-serif);
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--bg-primary);
+  }
+
+  .project-body {
+    max-width: 720px;
+    padding-block: 3.5rem;
+  }
+
+  .project-body :global(h2) {
+    font-size: 1.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .project-body :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .project-body :global(h3) {
+    font-size: 1.15rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .project-body :global(p) {
+    margin-bottom: 1.25rem;
+    color: var(--text-primary);
+    line-height: 1.7;
+  }
+
+  .project-body :global(ul),
+  .project-body :global(ol) {
+    margin: 0 0 1.25rem 1.5rem;
+    padding-left: 0;
+  }
+
+  .project-body :global(li) {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+
+  .project-body :global(img) {
+    width: 100%;
+    border-radius: 6px;
+    margin: 2rem 0;
+  }
+
+  .project-foot {
+    padding-block: 2rem 4rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .back-link {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 800px) {
+    .head-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>

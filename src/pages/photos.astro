@@ -1,0 +1,79 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PhotoCard from '../components/PhotoCard.astro';
+
+const photos = await getCollection('photos');
+const sorted = photos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Base title="Photos — Logan Castro">
+  <section class="page-head">
+    <div class="container">
+      <p class="eyebrow">Photography</p>
+      <h1>Photos</h1>
+      <p class="lede">
+        Shot mostly on a Nikon D3100 and an iPhone, usually somewhere outside Santa Rosa.
+      </p>
+    </div>
+  </section>
+
+  <section class="gallery">
+    <div class="container">
+      {
+        sorted.length > 0 ? (
+          <div class="photo-grid">
+            {sorted.map((photo) => (
+              <PhotoCard
+                title={photo.data.title}
+                cover={photo.data.cover}
+                location={photo.data.location}
+                camera={photo.data.camera}
+              />
+            ))}
+          </div>
+        ) : (
+          <p class="muted">Gallery is currently empty.</p>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page-head {
+    padding-block: 4rem 1.5rem;
+  }
+
+  .page-head h1 {
+    margin: 0.5rem 0 1rem;
+  }
+
+  .lede {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    max-width: 580px;
+  }
+
+  .gallery {
+    padding-bottom: 5rem;
+  }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  @media (max-width: 900px) {
+    .photo-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .photo-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

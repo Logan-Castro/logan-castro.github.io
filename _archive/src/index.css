@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap");
+
+/* === Tokens: colors + fonts === */
+:root {
+  /* Colors (retro-aerospace palette) */
+  --bg: #0e1b2a;
+  --surface: #1b263b;
+  --muted: #415a77;
+  --text: #e0e1dd;
+  --accent: #f77f00;
+  --accent-2: #fcbf49;
+  --accent-3: #ffe5a0;
+  --radius: 12px;
+
+  /* Fonts */
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-head: "Space Grotesk", "Space Mono", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: "Space Mono", "IBM Plex Mono", "Fira Code", monospace;
+
+  /* (Optional) fluid type scale */
+  --fs-sm: clamp(0.9rem, 0.85rem + 0.2vw, 1rem);
+  --fs-md: clamp(1rem, 0.95rem + 0.3vw, 1.12rem);
+  --fs-lg: clamp(1.25rem, 1.1rem + 0.8vw, 1.6rem);
+  --fs-xl: clamp(2rem, 1.6rem + 2vw, 2.6rem);
+  --fs-2xl: clamp(2.6rem, 2.2rem + 3vw, 3.6rem);
+}
+
+/* === Base === */
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  line-height: 1.6;
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings use headline font */
+h1,
+h2,
+h3 {
+  font-family: var(--font-head);
+  line-height: 1.2;
+  letter-spacing: 0.2px;
+  margin: 0 0 0.5em;
+}
+
+h1 {
+  font-size: var(--fs-2xl);
+}
+
+h2 {
+  font-size: var(--fs-xl);
+}
+
+h3 {
+  font-size: var(--fs-lg);
+}
+
+/* Links use the accent color */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+a:hover {
+  color: var(--accent-2);
+}
+
+/* Simple utility helpers */
+.bg-surface {
+  background: var(--surface);
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+.border-muted {
+  border: 1px solid var(--muted);
+}

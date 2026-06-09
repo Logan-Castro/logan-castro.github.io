@@ -1,0 +1,128 @@
+---
+const navLinks = [
+  { href: '/projects', label: 'Work' },
+  { href: '/photos', label: 'Photos' },
+  { href: '/about', label: 'About' },
+  { href: '/Logan_Castro_Resume_10-10-25_5.pdf', label: 'Resume', external: true },
+];
+---
+
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="/" class="nav-name">Logan Castro</a>
+    <ul class="nav-links">
+      {
+        navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noopener noreferrer' : undefined}
+            >
+              {link.label}
+              {link.external && <span aria-hidden="true"> ↗</span>}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <button id="theme-toggle" type="button" aria-label="Toggle color theme">
+          <span class="theme-icon theme-icon-light" aria-hidden="true">☀</span>
+          <span class="theme-icon theme-icon-dark" aria-hidden="true">☾</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    border-bottom: 1px solid var(--border);
+    background-color: var(--bg-primary);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.25rem;
+  }
+
+  .nav-name {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+  }
+
+  .nav-name:hover {
+    color: var(--accent);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    list-style: none;
+    margin: 0;
+  }
+
+  .nav-links a {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+  }
+
+  .nav-links a:hover {
+    color: var(--accent);
+  }
+
+  #theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    color: var(--text-muted);
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  #theme-toggle:hover {
+    color: var(--accent);
+    background-color: var(--bg-secondary);
+  }
+
+  .theme-icon {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .theme-icon-dark {
+    display: none;
+  }
+
+  :global([data-theme='dark']) .theme-icon-light {
+    display: none;
+  }
+
+  :global([data-theme='dark']) .theme-icon-dark {
+    display: inline;
+  }
+
+  @media (max-width: 640px) {
+    .nav-links {
+      gap: 1rem;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  toggle?.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+</script>

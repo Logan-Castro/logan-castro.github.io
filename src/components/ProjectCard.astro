@@ -1,0 +1,138 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  category: string;
+  status: string;
+  href: string;
+  cover?: string;
+  coverAlt?: string;
+}
+
+const { title, description, category, status, href, cover, coverAlt } = Astro.props;
+
+const statusLabel: Record<string, string> = {
+  completed: 'Completed',
+  'in-progress': 'In Progress',
+  'on-horizon': 'On the Horizon',
+};
+
+const categoryLabel: Record<string, string> = {
+  vehicles: 'Vehicles',
+  fabrication: 'Fabrication',
+  mechatronics: 'Mechatronics',
+  class: 'Class Projects',
+  dorm: 'Dorm Builds',
+  fun: 'Fun',
+};
+---
+
+<a class="card" href={href}>
+  <div class="card-cover">
+    {
+      cover ? (
+        <img src={cover} alt={coverAlt ?? title} loading="lazy" />
+      ) : (
+        <div class="card-placeholder" aria-hidden="true">
+          <span>{title.charAt(0)}</span>
+        </div>
+      )
+    }
+  </div>
+  <div class="card-body">
+    <p class="eyebrow">
+      <span>{categoryLabel[category] ?? category}</span>
+      <span class="eyebrow-sep">·</span>
+      <span>{statusLabel[status] ?? status}</span>
+    </p>
+    <h3 class="card-title">{title}</h3>
+    <p class="card-desc">{description}</p>
+  </div>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    color: inherit;
+    transition:
+      transform 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.18);
+    color: inherit;
+  }
+
+  .card-cover {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background-color: var(--bg-secondary);
+  }
+
+  .card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .card:hover .card-cover img {
+    transform: scale(1.04);
+  }
+
+  .card-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent) 100%);
+    opacity: 0.55;
+  }
+
+  .card-placeholder span {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--bg-primary);
+  }
+
+  .card-body {
+    padding: 1.25rem 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .eyebrow-sep {
+    opacity: 0.5;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .card-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>

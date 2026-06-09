@@ -1,0 +1,326 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+
+const allProjects = await getCollection('projects');
+const sorted = allProjects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const total = sorted.length;
+const inProgress = sorted.filter((p) => p.data.status === 'in-progress').length;
+const completed = sorted.filter((p) => p.data.status === 'completed').length;
+
+const categoryOptions = [
+  { value: 'all', label: 'All' },
+  { value: 'vehicles', label: 'Vehicles' },
+  { value: 'fabrication', label: 'Fabrication' },
+  { value: 'mechatronics', label: 'Mechatronics' },
+  { value: 'class', label: 'Class Projects' },
+  { value: 'dorm', label: 'Dorm Builds' },
+  { value: 'fun', label: 'Fun' },
+];
+
+const statusOptions = [
+  { value: 'all', label: 'Any status' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'in-progress', label: 'In progress' },
+  { value: 'on-horizon', label: 'On the horizon' },
+];
+---
+
+<Base title="Projects — Logan Castro">
+  <section class="page-head">
+    <div class="container">
+      <p class="eyebrow">Catalog</p>
+      <h1>Projects</h1>
+      <p class="lede">
+        Everything I've built, broken, or learned from. Filter by category, status, or search the
+        text.
+      </p>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="container stats-row">
+      <div class="stat">
+        <p class="stat-num">{total}</p>
+        <p class="muted">Total projects</p>
+      </div>
+      <div class="stat">
+        <p class="stat-num">{inProgress}</p>
+        <p class="muted">In progress</p>
+      </div>
+      <div class="stat">
+        <p class="stat-num">{completed}</p>
+        <p class="muted">Completed</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="filters">
+    <div class="container">
+      <div class="filter-group" role="group" aria-label="Filter by category">
+        {
+          categoryOptions.map((opt, i) => (
+            <button
+              type="button"
+              class:list={['pill', i === 0 && 'is-active']}
+              data-filter="category"
+              data-value={opt.value}
+            >
+              {opt.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="filter-group" role="group" aria-label="Filter by status">
+        {
+          statusOptions.map((opt, i) => (
+            <button
+              type="button"
+              class:list={['pill', 'pill-secondary', i === 0 && 'is-active']}
+              data-filter="status"
+              data-value={opt.value}
+            >
+              {opt.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="search-row">
+        <input
+          type="search"
+          id="project-search"
+          placeholder="Search projects, tags, or descriptions"
+          aria-label="Search projects"
+        />
+        <p class="count muted">
+          Showing <span id="visible-count">{total}</span> of {total} projects
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="catalog">
+    <div class="container">
+      <div class="card-grid" id="project-grid">
+        {
+          sorted.map((project) => (
+            <article
+              class="card-wrap"
+              data-category={project.data.category}
+              data-status={project.data.status}
+              data-search={`${project.data.title} ${project.data.description} ${project.data.tags.join(' ')}`.toLowerCase()}
+            >
+              <ProjectCard
+                title={project.data.title}
+                description={project.data.description}
+                category={project.data.category}
+                status={project.data.status}
+                cover={project.data.cover}
+                coverAlt={project.data.coverAlt}
+                href={`/projects/${project.id}/`}
+              />
+            </article>
+          ))
+        }
+      </div>
+      <p class="empty muted" id="empty-state" hidden>No projects match those filters yet.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page-head {
+    padding-block: 4rem 1.5rem;
+  }
+
+  .page-head h1 {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .lede {
+    color: var(--text-muted);
+    max-width: 640px;
+    font-size: 1.05rem;
+  }
+
+  .stats {
+    padding-block: 1.5rem 2rem;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .stat {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--bg-secondary);
+  }
+
+  .stat-num {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .stat .muted {
+    margin: 0;
+  }
+
+  .filters {
+    padding-block: 1rem 2rem;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .pill {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background-color: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .pill:hover {
+    border-color: var(--accent);
+  }
+
+  .pill.is-active {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+    border-color: var(--accent);
+  }
+
+  .pill-secondary.is-active {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+  }
+
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  #project-search {
+    flex: 1;
+    min-width: 240px;
+    padding: 0.55rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+
+  #project-search:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .count {
+    margin: 0;
+  }
+
+  .catalog {
+    padding-bottom: 4rem;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .card-wrap[hidden] {
+    display: none;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 3rem 0;
+  }
+
+  @media (max-width: 900px) {
+    .card-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .stats-row {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .card-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const state = { category: 'all', status: 'all', q: '' };
+
+  const grid = document.getElementById('project-grid');
+  const countEl = document.getElementById('visible-count');
+  const emptyEl = document.getElementById('empty-state');
+  const search = document.getElementById('project-search') as HTMLInputElement | null;
+
+  function apply() {
+    if (!grid) return;
+    let visible = 0;
+    const cards = grid.querySelectorAll<HTMLElement>('.card-wrap');
+    cards.forEach((card) => {
+      const cat = card.dataset.category ?? '';
+      const stat = card.dataset.status ?? '';
+      const haystack = card.dataset.search ?? '';
+      const matchCat = state.category === 'all' || cat === state.category;
+      const matchStat = state.status === 'all' || stat === state.status;
+      const matchQ = state.q === '' || haystack.includes(state.q);
+      const show = matchCat && matchStat && matchQ;
+      card.hidden = !show;
+      if (show) visible += 1;
+    });
+    if (countEl) countEl.textContent = String(visible);
+    if (emptyEl) emptyEl.hidden = visible !== 0;
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.pill').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter as 'category' | 'status' | undefined;
+      const value = btn.dataset.value ?? 'all';
+      if (!filter) return;
+      state[filter] = value;
+      document
+        .querySelectorAll<HTMLButtonElement>(`.pill[data-filter="${filter}"]`)
+        .forEach((b) => b.classList.toggle('is-active', b === btn));
+      apply();
+    });
+  });
+
+  search?.addEventListener('input', (e) => {
+    state.q = (e.target as HTMLInputElement).value.trim().toLowerCase();
+    apply();
+  });
+</script>
