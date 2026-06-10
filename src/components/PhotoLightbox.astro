@@ -28,6 +28,8 @@
   .lightbox {
     position: fixed;
     inset: 0;
+    height: 100dvh;
+    min-height: 100dvh;
     z-index: 1000;
     background-color: rgba(15, 22, 38, 0.92);
     backdrop-filter: blur(10px);
@@ -140,8 +142,14 @@
 </style>
 
 <script>
-  const lightbox = document.getElementById('photo-lightbox') as HTMLElement | null;
-  if (lightbox) {
+  let lightboxCleanup: (() => void) | null = null;
+
+  function initLightbox() {
+    if (lightboxCleanup) lightboxCleanup();
+
+    const lightbox = document.getElementById('photo-lightbox') as HTMLElement | null;
+    if (!lightbox) return;
+
     const img = lightbox.querySelector<HTMLImageElement>('.lightbox-img');
     const titleEl = lightbox.querySelector<HTMLElement>('[data-lightbox-title]');
     const lineEl = lightbox.querySelector<HTMLElement>('[data-lightbox-line]');
@@ -179,23 +187,42 @@
       lastFocused?.focus();
     };
 
-    document.addEventListener('click', (e) => {
+    const onDocClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
       const trigger = target?.closest('[data-photo-trigger]') as HTMLElement | null;
       if (trigger && !trigger.hasAttribute('disabled')) {
         e.preventDefault();
         openLightbox(trigger);
       }
-    });
+    };
 
-    closeBtn?.addEventListener('click', closeLightbox);
+    const onCloseBtnClick = () => closeLightbox();
 
-    lightbox.addEventListener('click', (e) => {
+    const onLightboxClick = (e: MouseEvent) => {
       if (e.target === lightbox) closeLightbox();
-    });
+    };
 
-    document.addEventListener('keydown', (e) => {
+    const onKeydown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !lightbox.hidden) closeLightbox();
-    });
+    };
+
+    document.addEventListener('click', onDocClick);
+    closeBtn?.addEventListener('click', onCloseBtnClick);
+    lightbox.addEventListener('click', onLightboxClick);
+    document.addEventListener('keydown', onKeydown);
+
+    lightboxCleanup = () => {
+      document.removeEventListener('click', onDocClick);
+      document.removeEventListener('keydown', onKeydown);
+      closeBtn?.removeEventListener('click', onCloseBtnClick);
+      lightbox.removeEventListener('click', onLightboxClick);
+      document.body.style.overflow = '';
+      lightboxCleanup = null;
+    };
   }
+
+  document.addEventListener('astro:page-load', initLightbox);
+  document.addEventListener('astro:before-swap', () => {
+    if (lightboxCleanup) lightboxCleanup();
+  });
 </script>

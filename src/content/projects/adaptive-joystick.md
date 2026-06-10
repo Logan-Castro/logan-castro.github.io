@@ -4,7 +4,7 @@ description: "Modular joystick for users with dyskinetic CP, with swappable size
 date: 2025-03-10
 category: "class"
 status: "completed"
-tags: ["Fusion 360", "3D Printing", "Makey Makey", "Accessibility", "Circuitry"]
+tags: ["Fusion", "3D Printing", "Makey Makey", "Accessibility", "Circuitry"]
 featured: false
 context: "Accessibility design — Boston College, Spring 2025"
 ---

@@ -4,7 +4,7 @@ description: "Designing and printing my own desk and tool organization system. S
 date: 2026-02-01
 category: "dorm"
 status: "in-progress"
-tags: ["Fusion 360", "3D Printing", "Ikea Skadis"]
+tags: ["Fusion", "3D Printing", "Ikea Skadis"]
 featured: false
 context: "Personal — ongoing"
 ---

@@ -4,7 +4,7 @@ description: "3D-printed dorm kitchen silverware organizer. Worked well; ate a l
 date: 2024-09-05
 category: "dorm"
 status: "completed"
-tags: ["Fusion 360", "3D Printing"]
+tags: ["Fusion", "3D Printing"]
 featured: false
 context: "Personal — Boston College dorm, 2024"
 ---

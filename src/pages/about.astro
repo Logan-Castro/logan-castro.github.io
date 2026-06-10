@@ -1,5 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
+
+const carouselImages = [
+  { src: '/images/about/Bali_Mountain_Bike.webp', alt: 'Mountain biking in Bali' },
+  { src: '/images/about/Top_of_Mt_St_Helena.webp', alt: 'Summit of Mt. St. Helena' },
+  { src: '/images/about/Whitewater_at_Cache_Creek.webp', alt: 'Whitewater on Cache Creek' },
+  { src: '/images/about/Urchin_at_BML.webp', alt: 'Sea urchin at the Bodega Marine Laboratory' },
+  { src: '/images/about/Portland_Street.webp', alt: 'A street scene in Portland' },
+  { src: '/images/about/Halloween_Club_Fair.webp', alt: 'Halloween at the SRJC club fair' },
+];
 ---
 
 <Base title="About — Logan Castro">
@@ -11,28 +20,56 @@ import Base from '../layouts/Base.astro';
   </section>
 
   <section class="about-body">
-    <div class="container body-grid">
-      <div class="body-copy">
-        <p>
-          I'm a mechanical engineering student at Santa Rosa Junior College after a year at Boston
-          College. The short version: I like building things that have to actually work — projects
-          where the failure mode is real and someone has to live with the result.
-        </p>
-        <p>
-          Most of what I make starts with a real problem: a wildfire that hit my hometown, a
-          friend who can't grip a stock joystick, a competition car that needs a faster way to
-          validate suspension changes. The build itself is just the bridge between the problem and
-          the answer.
-        </p>
-        <p>
-          Off the bench, I'm usually shooting film around Annadel State Park, on a bike somewhere
-          near Highway 1, or building something that has no business existing. The portfolio is the
-          long version.
-        </p>
+    <div class="container body-copy">
+      <p>
+        I grew up in Sonoma County, right in the middle of some of the best coastline and hiking in California. I'm a mechanical engineering student at Santa Rosa Junior College, where I co-founded the Baja SAE program and lead vehicle dynamics. I spent a year at Boston College before transferring, and somewhere along the line I figured out that the engineering I care most about is the kind that gets used outside, by people trying to understand the world rather than just extract from it.
+      </p>
+      <p>
+        When I'm not in the shop or doing schoolwork, I'm usually outside. Hiking, camping, mountain biking, floating rivers, finding excuses to be on the coast. I've ridden bikes through Bali, explored caves in Washington, and eaten so much food solo hiking that I've forgotten what the world was like before discovering PB&J burritos. Being outside isn't a hobby I fit in around the rest of life, it's closer to the reason I do everything else.
+      </p>
+      <p>
+        That shapes what I want to build. I want to make tools that help researchers and scientists do work they couldn't do otherwise, and put them in the hands of the people who care about these places as much as I do. I don't know exactly what form that takes yet, but the direction is clear.
+      </p>
+    </div>
+  </section>
+
+  <section class="about-carousel">
+    <div class="container">
+      <div class="carousel" data-carousel>
+        <div class="carousel-track" data-carousel-track>
+          {
+            carouselImages.map((img, i) => (
+              <div class:list={['carousel-slide', { 'is-active': i === 0 }]}>
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading={i < 2 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+              </div>
+            ))
+          }
+        </div>
+        <button type="button" class="carousel-ctrl carousel-prev" data-carousel-prev aria-label="Previous image">
+          <span aria-hidden="true">‹</span>
+        </button>
+        <button type="button" class="carousel-ctrl carousel-next" data-carousel-next aria-label="Next image">
+          <span aria-hidden="true">›</span>
+        </button>
+        <div class="carousel-dots" role="tablist" aria-label="Choose image">
+          {
+            carouselImages.map((_, i) => (
+              <button
+                type="button"
+                class:list={['carousel-dot', { 'is-active': i === 0 }]}
+                data-carousel-dot={i}
+                role="tab"
+                aria-label={`Go to image ${i + 1}`}
+              />
+            ))
+          }
+        </div>
       </div>
-      <aside class="body-aside">
-        <img src="/images/about/about-workshop.jpg" alt="Logan in the workshop" loading="lazy" />
-      </aside>
     </div>
   </section>
 </Base>
@@ -47,14 +84,11 @@ import Base from '../layouts/Base.astro';
   }
 
   .about-body {
-    padding-block: 2rem 5rem;
+    padding-block: 2rem 2.5rem;
   }
 
-  .body-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 3rem;
-    align-items: start;
+  .body-copy {
+    max-width: 720px;
   }
 
   .body-copy p {
@@ -62,15 +96,343 @@ import Base from '../layouts/Base.astro';
     line-height: 1.7;
   }
 
-  .body-aside img {
-    width: 100%;
+  .about-carousel {
+    padding-block: 0 5rem;
+  }
+
+  .carousel {
+    position: relative;
+    height: 480px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--bg-secondary);
+  }
+
+  .carousel-track {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 1.5rem;
+    will-change: transform;
+    transition: transform 600ms cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .carousel-slide {
+    flex: 0 0 auto;
+    height: 100%;
+    opacity: 0.4;
+    transition: opacity 500ms ease;
+  }
+
+  .carousel-slide.is-active {
+    opacity: 1;
+  }
+
+  .carousel-slide img {
+    height: 100%;
+    width: auto;
+    display: block;
     border-radius: 6px;
-    border: 1px solid var(--border);
+  }
+
+  .carousel-ctrl {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.35);
+    color: white;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    border: 0;
+    cursor: pointer;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.15s;
+  }
+
+  .carousel:hover .carousel-ctrl,
+  .carousel:focus-within .carousel-ctrl {
+    opacity: 1;
+  }
+
+  .carousel-ctrl:hover {
+    background-color: rgba(0, 0, 0, 0.55);
+  }
+
+  .carousel-ctrl:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .carousel-ctrl span {
+    transform: translateY(-2px);
+  }
+
+  .carousel-prev { left: 0.75rem; }
+  .carousel-next { right: 0.75rem; }
+
+  .carousel-dots {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.35rem 0.55rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 999px;
+  }
+
+  .carousel-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    border: 0;
+    background-color: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.15s, transform 0.15s;
+  }
+
+  .carousel-dot:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .carousel-dot.is-active {
+    background-color: white;
+    transform: scale(1.25);
+  }
+
+  .carousel-dot:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
 
   @media (max-width: 800px) {
-    .body-grid {
-      grid-template-columns: 1fr;
+    .carousel {
+      height: 320px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-track,
+    .carousel-slide {
+      transition: none;
     }
   }
 </style>
+
+<script>
+  let carouselCleanup: (() => void) | null = null;
+
+  function initCarousel() {
+    if (carouselCleanup) carouselCleanup();
+
+    const carousel = document.querySelector<HTMLElement>('[data-carousel]');
+    if (!carousel) return;
+
+    const track = carousel.querySelector<HTMLElement>('[data-carousel-track]');
+    if (!track) return;
+
+    const templates = Array.from(carousel.querySelectorAll<HTMLElement>('.carousel-slide'));
+    const dots = Array.from(carousel.querySelectorAll<HTMLElement>('[data-carousel-dot]'));
+    const prevBtn = carousel.querySelector<HTMLElement>('[data-carousel-prev]');
+    const nextBtn = carousel.querySelector<HTMLElement>('[data-carousel-next]');
+
+    if (templates.length <= 1) return;
+
+    const N = templates.length;
+    const BUFFER = 2;            // slides shown to each side of the active center
+    const WINDOW = BUFFER * 2 + 1; // 5 slides in the track at any time
+    const TRANSITION_MS = 620;   // matches the CSS transform transition + a tiny safety margin
+
+    // Detach the SSR slides; track will be populated entirely with clones managed below.
+    const initialActive = Math.max(0, templates.findIndex((t) => t.classList.contains('is-active')));
+    templates.forEach((t) => t.remove());
+
+    const createSlide = (realIdx: number): HTMLElement => {
+      const el = templates[realIdx].cloneNode(true) as HTMLElement;
+      el.classList.remove('is-active');
+      return el;
+    };
+
+    let centerIdx = initialActive;
+    const trackEls: HTMLElement[] = [];
+
+    const realAt = (offset: number) => (((centerIdx + offset) % N) + N) % N;
+
+    // Initial fill — BUFFER slides to the left of center, the center, BUFFER to the right
+    for (let i = -BUFFER; i <= BUFFER; i++) {
+      const el = createSlide(realAt(i));
+      if (i === 0) el.classList.add('is-active');
+      trackEls.push(el);
+      track.appendChild(el);
+    }
+
+    const ADVANCE_MS = 4500;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let autoTimer: ReturnType<typeof setInterval> | null = null;
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+    let isAnimating = false;
+
+    const positionToSlot = (slotIdx: number, animate: boolean) => {
+      const target = trackEls[slotIdx];
+      if (!target) return;
+      if (!animate) track.style.transition = 'none';
+      const containerWidth = carousel.clientWidth;
+      const tx = containerWidth / 2 - (target.offsetLeft + target.offsetWidth / 2);
+      track.style.transform = `translateX(${tx}px)`;
+      if (!animate) {
+        void track.offsetHeight;
+        track.style.transition = '';
+      }
+    };
+
+    const refreshDots = () => {
+      dots.forEach((d) => d.classList.remove('is-active'));
+      dots[centerIdx]?.classList.add('is-active');
+    };
+
+    // After an advance animation completes, slide the DOM window: drop the leftmost
+    // slide and append a new slide on the right. Compensate translate so the visible
+    // position of the (new) center doesn't move when the layout shifts.
+    const shiftForward = () => {
+      const removed = trackEls.shift();
+      removed?.remove();
+      const newEl = createSlide(realAt(BUFFER));
+      track.appendChild(newEl);
+      trackEls.push(newEl);
+      positionToSlot(BUFFER, false);
+    };
+
+    const shiftBackward = () => {
+      const removed = trackEls.pop();
+      removed?.remove();
+      const newEl = createSlide(realAt(-BUFFER));
+      track.insertBefore(newEl, trackEls[0]);
+      trackEls.unshift(newEl);
+      positionToSlot(BUFFER, false);
+    };
+
+    const advance = () => {
+      if (isAnimating) return;
+      isAnimating = true;
+      centerIdx = (centerIdx + 1) % N;
+      trackEls[BUFFER].classList.remove('is-active');
+      trackEls[BUFFER + 1].classList.add('is-active');
+      refreshDots();
+      positionToSlot(BUFFER + 1, true);
+      setTimeout(() => {
+        shiftForward();
+        isAnimating = false;
+      }, TRANSITION_MS);
+    };
+
+    const retreat = () => {
+      if (isAnimating) return;
+      isAnimating = true;
+      centerIdx = ((centerIdx - 1) % N + N) % N;
+      trackEls[BUFFER].classList.remove('is-active');
+      trackEls[BUFFER - 1].classList.add('is-active');
+      refreshDots();
+      positionToSlot(BUFFER - 1, true);
+      setTimeout(() => {
+        shiftBackward();
+        isAnimating = false;
+      }, TRANSITION_MS);
+    };
+
+    // Multi-step jump: chain advance() / retreat() in the shorter direction
+    let chainTimer: ReturnType<typeof setTimeout> | null = null;
+    const goTo = (target: number) => {
+      if (target === centerIdx || isAnimating) return;
+      const forward = ((target - centerIdx) % N + N) % N;
+      const backward = ((centerIdx - target) % N + N) % N;
+      const step = forward <= backward ? advance : retreat;
+      let remaining = Math.min(forward, backward);
+      const tick = () => {
+        if (remaining <= 0) return;
+        remaining--;
+        step();
+        if (remaining > 0) {
+          chainTimer = setTimeout(tick, TRANSITION_MS + 20);
+        }
+      };
+      tick();
+    };
+
+    const startAuto = () => {
+      if (reducedMotion || autoTimer) return;
+      autoTimer = setInterval(advance, ADVANCE_MS);
+    };
+    const stopAuto = () => {
+      if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+    };
+    const restartAuto = () => {
+      stopAuto();
+      startAuto();
+    };
+
+    const onPrev = () => { retreat(); restartAuto(); };
+    const onNext = () => { advance(); restartAuto(); };
+    const onDotClick = (e: Event) => {
+      const t = e.currentTarget as HTMLElement;
+      const idx = Number(t.dataset.carouselDot);
+      if (Number.isFinite(idx)) {
+        goTo(idx);
+        restartAuto();
+      }
+    };
+
+    const onResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => positionToSlot(BUFFER, false), 100);
+    };
+
+    prevBtn?.addEventListener('click', onPrev);
+    nextBtn?.addEventListener('click', onNext);
+    dots.forEach((dot) => dot.addEventListener('click', onDotClick));
+
+    carousel.addEventListener('mouseenter', stopAuto);
+    carousel.addEventListener('mouseleave', startAuto);
+    carousel.addEventListener('focusin', stopAuto);
+    carousel.addEventListener('focusout', startAuto);
+
+    window.addEventListener('resize', onResize);
+
+    // Re-measure once each image's natural dimensions settle
+    Array.from(track.querySelectorAll('img')).forEach((img) => {
+      if (!img.complete) {
+        img.addEventListener('load', () => positionToSlot(BUFFER, false), { once: true });
+      }
+    });
+
+    positionToSlot(BUFFER, false);
+    refreshDots();
+    startAuto();
+
+    carouselCleanup = () => {
+      stopAuto();
+      if (chainTimer) clearTimeout(chainTimer);
+      window.removeEventListener('resize', onResize);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      carouselCleanup = null;
+    };
+  }
+
+  document.addEventListener('astro:page-load', initCarousel);
+  document.addEventListener('astro:before-swap', () => {
+    if (carouselCleanup) carouselCleanup();
+  });
+</script>

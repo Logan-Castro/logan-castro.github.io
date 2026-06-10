@@ -2,6 +2,9 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+/* PAGE TRANSITION - remove this block to disable */
+import { ClientRouter } from 'astro:transitions';
+/* END PAGE TRANSITION */
 
 interface Props {
   title?: string;
@@ -23,8 +26,11 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" href="/favicon.ico" />
     <title>{title}</title>
+    {/* PAGE TRANSITION - remove this line to disable */}
+    <ClientRouter />
+    {/* END PAGE TRANSITION */}
     <script is:inline>
-      (function () {
+      function applyStoredTheme() {
         try {
           const stored = localStorage.getItem('theme');
           const system = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -34,7 +40,28 @@ const {
         } catch (_) {
           document.documentElement.setAttribute('data-theme', 'light');
         }
-      })();
+      }
+      applyStoredTheme();
+      document.addEventListener('astro:after-swap', applyStoredTheme);
+      document.addEventListener('astro:before-swap', (e) => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme && e.newDocument) {
+          e.newDocument.documentElement.setAttribute('data-theme', currentTheme);
+        }
+      });
+
+      // Keep prefetched HTML warm so post-idle navigations don't stall on a cold fetch.
+      function rewarmInternalLinks() {
+        document.querySelectorAll('a[href^="/"]').forEach((a) => {
+          const href = a.getAttribute('href');
+          if (!href || href.includes('#') || /\.[a-z0-9]+$/i.test(href)) return;
+          try { fetch(href).catch(() => {}); } catch (_) {}
+        });
+      }
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') rewarmInternalLinks();
+      });
+      setInterval(rewarmInternalLinks, 4 * 60 * 1000);
     </script>
   </head>
   <body>
@@ -45,3 +72,38 @@ const {
     <Footer />
   </body>
 </html>
+
+{/* PAGE TRANSITION - remove this style block to disable */}
+<style is:global>
+  /* PAGE TRANSITION - remove this block to disable */
+  ::view-transition {
+    background-color: var(--accent);
+  }
+
+  ::view-transition-old(root) {
+    animation: tc-wipe-cover 240ms cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: tc-wipe-reveal 240ms 240ms cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+
+  @keyframes tc-wipe-cover {
+    from { clip-path: inset(0 0 0 0); }
+    to   { clip-path: inset(0 0 0 100%); }
+  }
+
+  @keyframes tc-wipe-reveal {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none;
+    }
+  }
+  /* END PAGE TRANSITION */
+</style>
+{/* END PAGE TRANSITION */}

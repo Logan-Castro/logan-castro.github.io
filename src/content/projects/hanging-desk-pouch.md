@@ -4,7 +4,7 @@ description: "Fully 3D-printed pouch that hangs off the desk hutch beside the be
 date: 2024-10-22
 category: "dorm"
 status: "completed"
-tags: ["Fusion 360", "3D Printing", "Modular Design"]
+tags: ["Fusion", "3D Printing", "Modular Design"]
 featured: false
 context: "Personal — Boston College dorm, Fall 2024"
 ---

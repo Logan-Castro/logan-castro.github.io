@@ -4,7 +4,7 @@ description: "Accessibility-focused cage latching for a wheelchair user with lim
 date: 2025-04-20
 category: "class"
 status: "completed"
-tags: ["Fusion 360", "3D Printing", "Laser Cutting", "Solenoid", "Wood Lathe", "Accessibility"]
+tags: ["Fusion", "3D Printing", "Laser Cutting", "Solenoid", "Wood Lathe", "Accessibility"]
 featured: false
 team: ["Emma-Claire Quinn", "Avery Nash"]
 context: "Client project — Boston College, Spring 2025"

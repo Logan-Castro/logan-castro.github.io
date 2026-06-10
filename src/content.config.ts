@@ -15,6 +15,7 @@ const projects = defineCollection({
     coverAlt: z.string().optional(),
     team: z.array(z.string()).optional(),
     context: z.string(),
+    imageDir: z.string().optional(),
   }),
 });
 

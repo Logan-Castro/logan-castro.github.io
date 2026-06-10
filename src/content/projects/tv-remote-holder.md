@@ -4,7 +4,7 @@ description: "Simple 3D-printed remote caddy that command-strips to the back of 
 date: 2024-10-08
 category: "dorm"
 status: "completed"
-tags: ["Fusion 360", "3D Printing", "Command Strips"]
+tags: ["Fusion", "3D Printing", "Command Strips"]
 featured: false
 context: "Personal — Boston College dorm common room, Fall 2024"
 ---
