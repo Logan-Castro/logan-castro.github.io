@@ -9,66 +9,109 @@ const carouselImages = [
   { src: '/images/about/Portland_Street.webp', alt: 'A street scene in Portland' },
   { src: '/images/about/Halloween_Club_Fair.webp', alt: 'Halloween at the SRJC club fair' },
 ];
+
+// Coverflow geometry by distance from the active card (0,1,2) plus a hidden far stop (3).
+// x is a fraction of the CONTAINER (viewport) width — keeps spacing stable no matter which
+// card is active, and lets the row span the full page and spill off the edges.
+// The x values are spaced for EVEN edge-to-edge gaps: each step accounts for the
+// shrinking card half-widths (nominal card ≈ 0.31W, scales below, gap ≈ 0.05W) so the
+// gap between every neighbour is equal rather than tight-then-wide.
+// z/ry are px/deg; s is scale; o is opacity.
+// NOTE: the client script below mirrors these exact STOPS — keep them in sync.
+const STOPS = [
+  { x: 0, z: 0, ry: 0, s: 1, o: 1 },
+  { x: 0.338, z: -120, ry: 18, s: 0.86, o: 0.82 },
+  { x: 0.633, z: -300, ry: 30, s: 0.72, o: 0.5 },
+  { x: 0.888, z: -420, ry: 38, s: 0.6, o: 0 },
+];
+const N = carouselImages.length;
+
+// Shortest signed distance from the active card (active = 0 for the SSR render).
+function signedOffset(i: number): number {
+  let d = ((i % N) + N) % N;
+  if (d > N / 2) d -= N;
+  return d;
+}
+
+function offsetStyle(o: number): string {
+  const a = Math.min(Math.abs(o), 3);
+  const dir = Math.sign(o);
+  const lvl = STOPS[a];
+  const zi = Math.round(30 - a * 10);
+  // SSR uses vw for the horizontal offset (container ≈ viewport width); the script
+  // recomputes from the exact container width on load.
+  const transform =
+    `translate(-50%, -50%) translateX(${(dir * lvl.x * 100).toFixed(2)}vw)` +
+    ` translateZ(${lvl.z}px) rotateY(${dir * lvl.ry}deg) scale(${lvl.s})`;
+  return `transform:${transform};opacity:${lvl.o};z-index:${zi};pointer-events:${a >= 3 ? 'none' : 'auto'};`;
+}
 ---
 
 <Base title="About — Logan Castro">
   <section class="page-head">
     <div class="container">
-      <p class="eyebrow">About</p>
-      <h1>Hi, I'm Logan.</h1>
+      <div class="head-copy">
+        <p class="eyebrow">About</p>
+        <h1>Hi, I'm Logan.</h1>
+      </div>
     </div>
   </section>
 
   <section class="about-body">
-    <div class="container body-copy">
-      <p>
-        I grew up in Sonoma County, right in the middle of some of the best coastline and hiking in California. I'm a mechanical engineering student at Santa Rosa Junior College, where I co-founded the Baja SAE program and lead vehicle dynamics. I spent a year at Boston College before transferring, and somewhere along the line I figured out that the engineering I care most about is the kind that gets used outside, by people trying to understand the world rather than just extract from it.
-      </p>
-      <p>
-        When I'm not in the shop or doing schoolwork, I'm usually outside. Hiking, camping, mountain biking, floating rivers, finding excuses to be on the coast. I've ridden bikes through Bali, explored caves in Washington, and eaten so much food solo hiking that I've forgotten what the world was like before discovering PB&J burritos. Being outside isn't a hobby I fit in around the rest of life, it's closer to the reason I do everything else.
-      </p>
-      <p>
-        That shapes what I want to build. I want to make tools that help researchers and scientists do work they couldn't do otherwise, and put them in the hands of the people who care about these places as much as I do. I don't know exactly what form that takes yet, but the direction is clear.
-      </p>
+    <div class="container">
+      <div class="body-copy">
+        <p>
+          I grew up in Sonoma County, right in the middle of some of the best coastline and hiking in California. I'm a mechanical engineering student at Santa Rosa Junior College, where I co-founded the Baja SAE program and lead vehicle dynamics. I spent a year at Boston College before transferring, and somewhere along the line I figured out that the engineering I care most about is the kind that gets used outside, by people trying to understand the world rather than just extract from it.
+        </p>
+        <p>
+          When I'm not in the shop or doing schoolwork, I'm usually outside. Hiking, camping, mountain biking, floating rivers, finding excuses to be on the coast. I've ridden bikes through Bali, explored caves in Washington, and eaten so much food solo hiking that I've forgotten what the world was like before discovering PB&J burritos. Being outside isn't a hobby I fit in around the rest of life, it's closer to the reason I do everything else.
+        </p>
+        <p>
+          That shapes what I want to build. I want to make tools that help researchers and scientists do work they couldn't do otherwise, and put them in the hands of the people who care about these places as much as I do. I don't know exactly what form that takes yet, but the direction is clear.
+        </p>
+      </div>
     </div>
   </section>
 
   <section class="about-carousel">
-    <div class="container">
-      <div class="carousel" data-carousel>
-        <div class="carousel-track" data-carousel-track>
-          {
-            carouselImages.map((img, i) => (
-              <div class:list={['carousel-slide', { 'is-active': i === 0 }]}>
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  loading={i < 2 ? 'eager' : 'lazy'}
-                  decoding="async"
-                />
-              </div>
-            ))
-          }
-        </div>
-        <button type="button" class="carousel-ctrl carousel-prev" data-carousel-prev aria-label="Previous image">
-          <span aria-hidden="true">‹</span>
-        </button>
-        <button type="button" class="carousel-ctrl carousel-next" data-carousel-next aria-label="Next image">
-          <span aria-hidden="true">›</span>
-        </button>
-        <div class="carousel-dots" role="tablist" aria-label="Choose image">
-          {
-            carouselImages.map((_, i) => (
-              <button
-                type="button"
-                class:list={['carousel-dot', { 'is-active': i === 0 }]}
-                data-carousel-dot={i}
-                role="tab"
-                aria-label={`Go to image ${i + 1}`}
+    <div class="coverflow" data-carousel>
+      <div class="coverflow-track" data-carousel-track>
+        {
+          carouselImages.map((img, i) => (
+            <div
+              class:list={['cf-card', { 'is-active': i === 0 }]}
+              data-carousel-card={i}
+              style={offsetStyle(signedOffset(i))}
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                loading={i < 2 ? 'eager' : 'lazy'}
+                decoding="async"
+                draggable="false"
               />
-            ))
-          }
-        </div>
+            </div>
+          ))
+        }
+      </div>
+      <button type="button" class="carousel-ctrl carousel-prev" data-carousel-prev aria-label="Previous image">
+        <span aria-hidden="true">‹</span>
+      </button>
+      <button type="button" class="carousel-ctrl carousel-next" data-carousel-next aria-label="Next image">
+        <span aria-hidden="true">›</span>
+      </button>
+      <div class="carousel-dots" role="tablist" aria-label="Choose image">
+        {
+          carouselImages.map((_, i) => (
+            <button
+              type="button"
+              class:list={['carousel-dot', { 'is-active': i === 0 }]}
+              data-carousel-dot={i}
+              role="tab"
+              aria-label={`Go to image ${i + 1}`}
+            />
+          ))
+        }
       </div>
     </div>
   </section>
@@ -77,6 +120,11 @@ const carouselImages = [
 <style>
   .page-head {
     padding-block: 4rem 1rem;
+  }
+
+  .head-copy {
+    max-width: 780px;
+    margin-inline: auto;
   }
 
   .page-head h1 {
@@ -88,7 +136,8 @@ const carouselImages = [
   }
 
   .body-copy {
-    max-width: 720px;
+    max-width: 780px;
+    margin-inline: auto;
   }
 
   .body-copy p {
@@ -97,49 +146,64 @@ const carouselImages = [
   }
 
   .about-carousel {
-    padding-block: 0 5rem;
+    padding-block: 1rem 5rem;
   }
 
-  .carousel {
+  /* Full-bleed 3D coverflow — spans the viewport, cards overflow the edges. */
+  .coverflow {
     position: relative;
-    height: 480px;
-    border-radius: 8px;
+    width: 100%;
+    height: clamp(260px, 28vw, 440px);
+    perspective: 1600px;
     overflow: hidden;
-    background-color: var(--bg-secondary);
+    touch-action: pan-y;
+    user-select: none;
   }
 
-  .carousel-track {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    gap: 1.5rem;
-    will-change: transform;
-    transition: transform 600ms cubic-bezier(0.65, 0, 0.35, 1);
+  .coverflow-track {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
   }
 
-  .carousel-slide {
-    flex: 0 0 auto;
-    height: 100%;
-    opacity: 0.4;
-    transition: opacity 500ms ease;
+  /* Cards size to each image's natural aspect ratio (fixed height, auto width) so
+     nothing is cropped — portrait and landscape photos are shown whole. */
+  .cf-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: clamp(190px, 21vw, 360px);
+    width: auto;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: grab;
+    will-change: transform, opacity;
+    /* transform / opacity / z-index are set inline (SSR) and by the script */
+    transition:
+      transform 660ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity 660ms ease;
   }
 
-  .carousel-slide.is-active {
-    opacity: 1;
+  .coverflow.is-dragging .cf-card {
+    cursor: grabbing;
   }
 
-  .carousel-slide img {
+  .cf-card.is-active {
+    box-shadow: 0 30px 60px -18px rgba(0, 0, 0, 0.55);
+  }
+
+  .cf-card img {
     height: 100%;
     width: auto;
     display: block;
-    border-radius: 6px;
+    pointer-events: none;
   }
 
   .carousel-ctrl {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 2;
+    z-index: 50;
     background-color: rgba(0, 0, 0, 0.35);
     color: white;
     width: 2.5rem;
@@ -156,8 +220,8 @@ const carouselImages = [
     transition: opacity 0.2s, background-color 0.15s;
   }
 
-  .carousel:hover .carousel-ctrl,
-  .carousel:focus-within .carousel-ctrl {
+  .coverflow:hover .carousel-ctrl,
+  .coverflow:focus-within .carousel-ctrl {
     opacity: 1;
   }
 
@@ -175,15 +239,19 @@ const carouselImages = [
     transform: translateY(-2px);
   }
 
-  .carousel-prev { left: 0.75rem; }
-  .carousel-next { right: 0.75rem; }
+  .carousel-prev {
+    left: 1.25rem;
+  }
+  .carousel-next {
+    right: 1.25rem;
+  }
 
   .carousel-dots {
     position: absolute;
     bottom: 0.85rem;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
+    z-index: 50;
     display: flex;
     gap: 0.4rem;
     padding: 0.35rem 0.55rem;
@@ -216,15 +284,14 @@ const carouselImages = [
     outline-offset: 2px;
   }
 
-  @media (max-width: 800px) {
-    .carousel {
-      height: 320px;
+  @media (max-width: 600px) {
+    .cf-card {
+      height: 46vw;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .carousel-track,
-    .carousel-slide {
+    .cf-card {
       transition: none;
     }
   }
@@ -233,142 +300,163 @@ const carouselImages = [
 <script>
   let carouselCleanup: (() => void) | null = null;
 
+  // Mirrors the STOPS table in the component frontmatter. x is a fraction of container width.
+  const STOPS = [
+    { x: 0, z: 0, ry: 0, s: 1, o: 1 },
+    { x: 0.338, z: -120, ry: 18, s: 0.86, o: 0.82 },
+    { x: 0.633, z: -300, ry: 30, s: 0.72, o: 0.5 },
+    { x: 0.888, z: -420, ry: 38, s: 0.6, o: 0 },
+  ];
+
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+  // Interpolated geometry at any (possibly fractional) distance from center.
+  function levelAt(dist: number) {
+    const a = Math.min(dist, 3);
+    const i = Math.min(Math.floor(a), 2);
+    const f = a - i;
+    const s0 = STOPS[i];
+    const s1 = STOPS[i + 1];
+    return {
+      x: lerp(s0.x, s1.x, f),
+      z: lerp(s0.z, s1.z, f),
+      ry: lerp(s0.ry, s1.ry, f),
+      s: lerp(s0.s, s1.s, f),
+      o: lerp(s0.o, s1.o, f),
+    };
+  }
+
+  // Apply the coverflow transform for a card at signed offset `o` (fractional allowed).
+  // `x` is the precomputed horizontal center in px (derived from real card widths).
+  function applyCard(card: HTMLElement, o: number, x: number) {
+    const dist = Math.abs(o);
+    const dir = Math.sign(o);
+    const lvl = levelAt(dist);
+    card.style.transform =
+      `translate(-50%, -50%) translateX(${x}px) translateZ(${lvl.z}px)` +
+      ` rotateY(${dir * lvl.ry}deg) scale(${lvl.s})`;
+    card.style.opacity = String(lvl.o);
+    card.style.zIndex = String(Math.round(30 - Math.min(dist, 3) * 10));
+    const hidden = dist >= 2.5;
+    card.style.pointerEvents = hidden ? 'none' : 'auto';
+    card.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+    card.classList.toggle('is-active', dist < 0.5);
+  }
+
   function initCarousel() {
     if (carouselCleanup) carouselCleanup();
 
     const carousel = document.querySelector<HTMLElement>('[data-carousel]');
     if (!carousel) return;
-
     const track = carousel.querySelector<HTMLElement>('[data-carousel-track]');
     if (!track) return;
 
-    const templates = Array.from(carousel.querySelectorAll<HTMLElement>('.carousel-slide'));
+    const cards = Array.from(carousel.querySelectorAll<HTMLElement>('.cf-card'));
     const dots = Array.from(carousel.querySelectorAll<HTMLElement>('[data-carousel-dot]'));
     const prevBtn = carousel.querySelector<HTMLElement>('[data-carousel-prev]');
     const nextBtn = carousel.querySelector<HTMLElement>('[data-carousel-next]');
+    if (cards.length <= 1) return;
 
-    if (templates.length <= 1) return;
-
-    const N = templates.length;
-    const BUFFER = 2;            // slides shown to each side of the active center
-    const WINDOW = BUFFER * 2 + 1; // 5 slides in the track at any time
-    const TRANSITION_MS = 620;   // matches the CSS transform transition + a tiny safety margin
-
-    // Detach the SSR slides; track will be populated entirely with clones managed below.
-    const initialActive = Math.max(0, templates.findIndex((t) => t.classList.contains('is-active')));
-    templates.forEach((t) => t.remove());
-
-    const createSlide = (realIdx: number): HTMLElement => {
-      const el = templates[realIdx].cloneNode(true) as HTMLElement;
-      el.classList.remove('is-active');
-      return el;
-    };
-
-    let centerIdx = initialActive;
-    const trackEls: HTMLElement[] = [];
-
-    const realAt = (offset: number) => (((centerIdx + offset) % N) + N) % N;
-
-    // Initial fill — BUFFER slides to the left of center, the center, BUFFER to the right
-    for (let i = -BUFFER; i <= BUFFER; i++) {
-      const el = createSlide(realAt(i));
-      if (i === 0) el.classList.add('is-active');
-      trackEls.push(el);
-      track.appendChild(el);
-    }
-
+    const N = cards.length;
+    const STEP_MS = 360; // chained-step cadence for multi-step jumps (dots / far cards)
     const ADVANCE_MS = 4500;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let autoTimer: ReturnType<typeof setInterval> | null = null;
-    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
-    let isAnimating = false;
 
-    const positionToSlot = (slotIdx: number, animate: boolean) => {
-      const target = trackEls[slotIdx];
-      if (!target) return;
-      if (!animate) track.style.transition = 'none';
-      const containerWidth = carousel.clientWidth;
-      const tx = containerWidth / 2 - (target.offsetLeft + target.offsetWidth / 2);
-      track.style.transform = `translateX(${tx}px)`;
-      if (!animate) {
-        void track.offsetHeight;
-        track.style.transition = '';
+    let activeIdx = Math.max(
+      0,
+      cards.findIndex((c) => c.classList.contains('is-active')),
+    );
+    const lastOffset = new Map<HTMLElement, number>();
+
+    const signedOffset = (i: number, pos: number): number => {
+      let d = (((i - pos) % N) + N) % N;
+      if (d > N / 2) d -= N;
+      return d;
+    };
+
+    // Scaled half-width (px) of the card currently sitting at distance `d` from center.
+    // Uses the card's real rendered width so gaps track the actual image sizes.
+    const halfW = (idx: number, d: number) => {
+      const w = cards[idx].offsetWidth || carousel.clientWidth * 0.3;
+      return 0.5 * w * STOPS[Math.min(d, 3)].s;
+    };
+
+    // Build the center-x (px) for each integer offset by walking out from the active card,
+    // adding each card's half-width plus a constant gap. Constant edge-to-edge spacing.
+    const buildPositions = (active: number): Record<number, number> => {
+      const gap = Math.max(14, carousel.clientWidth * 0.012);
+      const pos: Record<number, number> = { 0: 0 };
+      for (let k = 1; k <= 3; k++) {
+        const a = (active + k) % N;
+        const b = (active + k - 1) % N;
+        pos[k] = pos[k - 1] + halfW(b, k - 1) + gap + halfW(a, k);
       }
+      for (let k = -1; k >= -3; k--) {
+        const a = (((active + k) % N) + N) % N;
+        const b = (((active + k + 1) % N) + N) % N;
+        pos[k] = pos[k + 1] - (halfW(b, Math.abs(k + 1)) + gap + halfW(a, Math.abs(k)));
+      }
+      return pos;
     };
 
-    const refreshDots = () => {
-      dots.forEach((d) => d.classList.remove('is-active'));
-      dots[centerIdx]?.classList.add('is-active');
+    // Continuous center-x for a (possibly fractional) offset, lerping the integer table.
+    const posOf = (o: number, table: Record<number, number>): number => {
+      const lo = Math.max(-3, Math.min(3, Math.floor(o)));
+      const hi = Math.max(-3, Math.min(3, lo + 1));
+      const f = o - Math.floor(o);
+      return table[lo] + (table[hi] - table[lo]) * f;
     };
 
-    // After an advance animation completes, slide the DOM window: drop the leftmost
-    // slide and append a new slide on the right. Compensate translate so the visible
-    // position of the (new) center doesn't move when the layout shifts.
-    const shiftForward = () => {
-      const removed = trackEls.shift();
-      removed?.remove();
-      const newEl = createSlide(realAt(BUFFER));
-      track.appendChild(newEl);
-      trackEls.push(newEl);
-      positionToSlot(BUFFER, false);
-    };
-
-    const shiftBackward = () => {
-      const removed = trackEls.pop();
-      removed?.remove();
-      const newEl = createSlide(realAt(-BUFFER));
-      track.insertBefore(newEl, trackEls[0]);
-      trackEls.unshift(newEl);
-      positionToSlot(BUFFER, false);
+    // Settled layout against the integer active index. animate=false (or a card wrapping
+    // to the far side) applies the move instantly so a wrapping card doesn't sweep across
+    // the screen while it's faded out.
+    const layout = (animate: boolean) => {
+      const table = buildPositions(activeIdx);
+      cards.forEach((card) => {
+        const o = signedOffset(Number(card.dataset.carouselCard), activeIdx);
+        const prev = lastOffset.get(card);
+        const wrapped = prev !== undefined && Math.abs(o - prev) > 2;
+        const instant = !animate || wrapped;
+        card.style.transition = instant ? 'none' : '';
+        applyCard(card, o, table[o] ?? 0);
+        if (instant) {
+          void card.offsetWidth; // flush the no-transition move before re-enabling
+          card.style.transition = '';
+        }
+        lastOffset.set(card, o);
+      });
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === activeIdx));
     };
 
     const advance = () => {
-      if (isAnimating) return;
-      isAnimating = true;
-      centerIdx = (centerIdx + 1) % N;
-      trackEls[BUFFER].classList.remove('is-active');
-      trackEls[BUFFER + 1].classList.add('is-active');
-      refreshDots();
-      positionToSlot(BUFFER + 1, true);
-      setTimeout(() => {
-        shiftForward();
-        isAnimating = false;
-      }, TRANSITION_MS);
+      activeIdx = (activeIdx + 1) % N;
+      layout(true);
     };
-
     const retreat = () => {
-      if (isAnimating) return;
-      isAnimating = true;
-      centerIdx = ((centerIdx - 1) % N + N) % N;
-      trackEls[BUFFER].classList.remove('is-active');
-      trackEls[BUFFER - 1].classList.add('is-active');
-      refreshDots();
-      positionToSlot(BUFFER - 1, true);
-      setTimeout(() => {
-        shiftBackward();
-        isAnimating = false;
-      }, TRANSITION_MS);
+      activeIdx = (((activeIdx - 1) % N) + N) % N;
+      layout(true);
     };
 
-    // Multi-step jump: chain advance() / retreat() in the shorter direction
+    // Multi-step jump: chain single steps in the shorter direction so cards travel
+    // through the coverflow rather than teleporting.
     let chainTimer: ReturnType<typeof setTimeout> | null = null;
     const goTo = (target: number) => {
-      if (target === centerIdx || isAnimating) return;
-      const forward = ((target - centerIdx) % N + N) % N;
-      const backward = ((centerIdx - target) % N + N) % N;
-      const step = forward <= backward ? advance : retreat;
+      if (chainTimer) clearTimeout(chainTimer);
+      const forward = (((target - activeIdx) % N) + N) % N;
+      const backward = (((activeIdx - target) % N) + N) % N;
       let remaining = Math.min(forward, backward);
+      const step = forward <= backward ? advance : retreat;
       const tick = () => {
         if (remaining <= 0) return;
         remaining--;
         step();
-        if (remaining > 0) {
-          chainTimer = setTimeout(tick, TRANSITION_MS + 20);
-        }
+        if (remaining > 0) chainTimer = setTimeout(tick, reducedMotion ? 0 : STEP_MS);
       };
       tick();
     };
 
+    // --- auto-advance ---
+    let autoTimer: ReturnType<typeof setInterval> | null = null;
     const startAuto = () => {
       if (reducedMotion || autoTimer) return;
       autoTimer = setInterval(advance, ADVANCE_MS);
@@ -384,49 +472,115 @@ const carouselImages = [
       startAuto();
     };
 
-    const onPrev = () => { retreat(); restartAuto(); };
-    const onNext = () => { advance(); restartAuto(); };
+    // --- controls ---
+    const onPrev = () => {
+      retreat();
+      restartAuto();
+    };
+    const onNext = () => {
+      advance();
+      restartAuto();
+    };
     const onDotClick = (e: Event) => {
-      const t = e.currentTarget as HTMLElement;
-      const idx = Number(t.dataset.carouselDot);
+      const idx = Number((e.currentTarget as HTMLElement).dataset.carouselDot);
       if (Number.isFinite(idx)) {
         goTo(idx);
         restartAuto();
       }
     };
-
-    const onResize = () => {
-      if (resizeTimer) clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => positionToSlot(BUFFER, false), 100);
+    const onCardClick = (e: Event) => {
+      if (dragMoved) return; // a drag, not a click
+      const idx = Number((e.currentTarget as HTMLElement).dataset.carouselCard);
+      if (Number.isFinite(idx) && idx !== activeIdx) {
+        goTo(idx);
+        restartAuto();
+      }
     };
 
     prevBtn?.addEventListener('click', onPrev);
     nextBtn?.addEventListener('click', onNext);
     dots.forEach((dot) => dot.addEventListener('click', onDotClick));
+    cards.forEach((card) => card.addEventListener('click', onCardClick));
 
     carousel.addEventListener('mouseenter', stopAuto);
     carousel.addEventListener('mouseleave', startAuto);
     carousel.addEventListener('focusin', stopAuto);
     carousel.addEventListener('focusout', startAuto);
 
+    // --- drag / swipe: scrub the whole carousel through a fractional position ---
+    let dragging = false;
+    let dragMoved = false;
+    let dragStartX = 0;
+    let dragStep = 1;
+    let dragPos = 0;
+
+    // Live drag frame: every card interpolates to its fractional offset (no transition).
+    const dragRender = (pos: number) => {
+      const active = (((Math.round(pos) % N) + N) % N);
+      const table = buildPositions(active);
+      cards.forEach((card) => {
+        const o = signedOffset(Number(card.dataset.carouselCard), pos);
+        applyCard(card, o, posOf(o, table));
+        lastOffset.set(card, o);
+      });
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
+    };
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.button !== 0) return;
+      dragging = true;
+      dragMoved = false;
+      dragStartX = e.clientX;
+      // distance to advance one card = the active card's neighbor spacing → 1:1 feel
+      dragStep = buildPositions(activeIdx)[1] || carousel.clientWidth * 0.33;
+      dragPos = activeIdx;
+      stopAuto();
+      carousel.classList.add('is-dragging');
+      cards.forEach((c) => (c.style.transition = 'none'));
+      track.setPointerCapture?.(e.pointerId);
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      if (!dragging) return;
+      const dx = e.clientX - dragStartX;
+      if (Math.abs(dx) > 4) dragMoved = true;
+      dragPos = activeIdx - dx / dragStep;
+      dragRender(dragPos);
+    };
+    const onPointerUp = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      carousel.classList.remove('is-dragging');
+      track.releasePointerCapture?.(e.pointerId);
+      if (dragMoved) activeIdx = (((Math.round(dragPos) % N) + N) % N);
+      layout(true); // animate-snap to the nearest card and restore transitions
+      restartAuto();
+    };
+
+    track.addEventListener('pointerdown', onPointerDown);
+    track.addEventListener('pointermove', onPointerMove);
+    track.addEventListener('pointerup', onPointerUp);
+    track.addEventListener('pointercancel', onPointerUp);
+
+    // --- resize ---
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+    const onResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => layout(false), 100);
+    };
     window.addEventListener('resize', onResize);
 
-    // Re-measure once each image's natural dimensions settle
     Array.from(track.querySelectorAll('img')).forEach((img) => {
-      if (!img.complete) {
-        img.addEventListener('load', () => positionToSlot(BUFFER, false), { once: true });
-      }
+      if (!img.complete) img.addEventListener('load', () => layout(false), { once: true });
     });
 
-    positionToSlot(BUFFER, false);
-    refreshDots();
+    layout(false);
     startAuto();
 
     carouselCleanup = () => {
       stopAuto();
       if (chainTimer) clearTimeout(chainTimer);
-      window.removeEventListener('resize', onResize);
       if (resizeTimer) clearTimeout(resizeTimer);
+      window.removeEventListener('resize', onResize);
       carouselCleanup = null;
     };
   }

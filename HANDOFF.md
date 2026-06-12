@@ -2,7 +2,39 @@
 
 Context for the next session. The site is built on top of `SPEC.md` (treat that as the source of truth for design intent). This document covers what was actually built, the reasoning behind judgment calls, quirks worth knowing, and possible next steps.
 
-The sections below are organized newest-first. **Session 2** is the most recent state; the original detailed sections below it (Quick context, Categories, etc.) are still mostly accurate as foundational context — read both.
+The sections below are organized newest-first. **Session 3** is the most recent state; earlier sections remain accurate as foundational context — read them too.
+
+---
+
+## Session 3 — 2026-06-11 update
+
+This session was focused entirely on [src/pages/about.astro](src/pages/about.astro): a small alignment fix, diagnosing a dev-server failure that masqueraded as a code bug, a full rebuild of the carousel into a draggable 3D coverflow, and final centering of the page header/body. Everything else on the site is untouched.
+
+### About page — header & body column
+- The body paragraphs were previously centered as a block but had `max-width` on the same element that carried `.container`'s `margin-inline: auto`, so the 720px block was centering in the viewport instead of aligning under the header. Fixed by nesting a `.body-copy` (constrained) inside a plain `.container`.
+- Final layout (after user iteration: tried full-center, then left-aligned-but-centered-column): the **eyebrow + h1 live in `.head-copy`** and the **paragraphs in `.body-copy`**, both `max-width: 780px; margin-inline: auto`. So header, eyebrow, and body all share the same centered 780px column with left-aligned text. Paragraph measure widened 720 → 780px.
+
+### About page — carousel rebuilt: treadmill → 3D coverflow
+The Session 2 "treadmill" carousel was fully replaced with a full-bleed 3D coverflow (reference: Clément Grellier's Infinite Gradient 3D Carousel). GSAP is **not** in the project, so this is plain CSS transitions + a JS position tracker. Same `carouselImages` array (6 src/alt entries) preserved; only presentation/interaction changed.
+
+Key implementation in [about.astro](src/pages/about.astro):
+- **Full-bleed:** the carousel section dropped its `.container`. `.coverflow` is `width: 100%` inside the unconstrained `<main>`, `overflow: hidden`, `perspective: 1600px`. `.coverflow-track` is `transform-style: preserve-3d`.
+- **Cards size to each image (no crop):** `.cf-card` has fixed height (`clamp(190px, 21vw, 360px)`), `width: auto`; the `<img>` is `height: 100%; width: auto`. No `object-fit: cover` — portrait and landscape photos show whole (the earlier cover version cropped faces). 16px radius, drop shadow on `.is-active` only, no border.
+- **Geometry — `STOPS` table** keyed by distance from center (0/1/2 + hidden far stop 3): `{ x, z, ry, s, o }`. Defined in **both** the frontmatter (for SSR) and the client `<script>` (for runtime) — **keep the two copies in sync.** `z`=translateZ px, `ry`=rotateY deg (applied as `dir*ry` so side cards face center), `s`=scale, `o`=opacity. Side cards recede via perspective + opacity falloff (0.82 / 0.5), **no dark overlay**.
+- **`x` is special:** in the frontmatter it's a viewport-fraction used only for the **SSR initial paint** (rendered as `vw`). At runtime the script **ignores `x`** and computes horizontal positions from the cards' **real measured widths** — see below.
+- **Even spacing from real widths (`buildPositions`):** walks outward from the active card, accumulating `half-width + constant gap + half-width` per step (gap ≈ `max(14px, 1.2% of width)`), using each card's actual `offsetWidth × scale`. This gives a **constant edge-to-edge gap regardless of orientation** — fixing the earlier "narrow portrait floats with big gaps" problem. `posOf()` lerps the integer-offset table for fractional (drag) positions.
+- **Drag/swipe = scrub:** Pointer Events. During drag each card interpolates continuously to its fractional offset (`dragRender`), so it feels like spinning the wheel (an earlier version translated the whole track as a flat layer — felt like dragging only the front photo; rejected). One card-step of drag = the active card's real neighbor distance (1:1 feel). On release it rounds to the nearest card and animate-snaps (660ms). Auto-advance (4.5s) pauses during drag/hover/focus.
+- **Infinite loop:** offset is the shortest signed distance; the wrap (sign flip) happens at distance 3 where opacity is 0, so the wrapping card never sweeps across the viewport. Multi-step jumps (dots / clicking a far card) chain single steps (`STEP_MS` 360) so cards travel through the flow rather than teleporting.
+- **Lifecycle:** `init` on `astro:page-load`, cleanup on `astro:before-swap` (the standard ClientRouter contract — carries over from Session 2).
+- **SSR correctness:** cards render with their coverflow transforms inline (vw-based nominal positions) so the layout looks right before JS and degrades gracefully without JS; the script re-lays-out from real widths on load and on every `img` `load`.
+
+**Tuning knobs (all single-number):** the `STOPS` `x` / `s` / `ry` / `z` / `o` columns; the `0.012` gap factor in `buildPositions`; card height `clamp` for overall size.
+
+### New quirk — stale dev server breaks `astro:page-load` site-wide
+Mid-session the hero fade-up, lightbox, **and** carousel all broke at once while CSS-only changes still worked. Root cause was **not** a code change — it was a stale `astro dev` whose Vite dependency-optimization cache for the **ClientRouter transitions runtime** had gone bad, so `astro:page-load` stopped firing (every JS feature that inits on that event dies together; styling is unaffected). Fix: kill the dev server and restart — on the fresh start Vite re-optimizes `transitions-router.js` / `transitions-events.js` / `transitions-swap-functions.js` and it works again. Signature to recognize it: **multiple unrelated JS features dead simultaneously + CSS fine** → suspect the dev server, not the diff. (Related to the Session 2 "ClientRouter resets html attributes" note and the original "stale astro dev on port 4321" quirk.)
+
+### Updated next steps
+The about-carousel rework and "about paragraph polish" items from Session 2's list are now **done**. Still standing (unchanged): Baja SAE + remaining project cover images/detail pages, tags filter on /projects, sticky nav on scroll, scroll fade-up on section entry, inline-link underlines, reading pass on project bodies, lightbox preload, mobile testing pass (the new coverflow has a `max-width: 600px` breakpoint but hasn't been phone-tested), workflow once-over before push.
 
 ---
 
